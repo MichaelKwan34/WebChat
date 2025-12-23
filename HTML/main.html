@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Main</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/CSS/main.css">
+        <script src='https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js'></script>
+        <script src='https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js'></script>
+    </head>
+    <body>
+        <section>
+            <div class="left-side">
+                <div class="left-content">
+                    <div class="left-side-header">  
+                        <h2 id="sidebar-header">Friends</h2>
+
+                        <div class="search-wrapper">
+                            <ion-icon name="search-outline" id="search-icon"></ion-icon>
+                            <input type="text" autocomplete="off" placeholder="Search" id="searchInput">
+                        </div>
+                    </div>
+                    <ul id="friend-lists">
+                        <li>Michael Kwan</li>
+                        <li>David Johnson</li>
+                        <li>Justine Patel</li>
+                        <li>Alice Chen</li>
+                        <li>Brian Smith</li>
+                        <li>Carla Wong</li>
+                        <li>Daniel Park</li>
+                        <li>Emily Tan</li>
+                        <li>Frank Liu</li>
+                        <li>Grace Lim</li>
+                        <li>Henry Cho</li>
+                        <li>Isabella Ng</li>
+                        <li>Jacky Ho</li>
+                        <li>Karen Ma</li>
+                        <li>Leo Sung</li>
+                        <li>Olivia Brown</li>
+                        <li>Liam Martinez</li>
+                        <li>Sophia Davis</li>
+                        <li>Noah Wilson</li>
+                        <li>Chloe Kim</li>
+                    </ul>
+                    <ul id="group-lists">
+                        <li>Group A</li>
+                        <li>Group B</li>
+                        <li>Group C</li>
+                        <li>Group D</li>
+                        <li>Group E</li>
+                        <li>Group F</li>
+                        <li>Group G</li>
+                        <li>Group H</li>
+                        <li>Group I</li>
+                        <li>Group J</li>
+                        <li>Group K</li>
+                        <li>Group L</li>
+                        <li>Group M</li>
+                        <li>Group N</li>
+                        <li>Group O</li>
+                        <li>Group P</li>
+                        <li>Group Q</li>
+                        <li>Group R</li>
+                        <li>Group S</li>
+                        <li>Group T</li>
+                        <li>Group U</li>
+                        <li>Group V</li>
+                        <li>Group W</li>
+                        <li>Group X</li>
+                        <li>Group Y</li>
+                        <li>Group Z</li>
+                    </ul>
+                    
+                    <button id="logoutBtn">Logout</button>
+                </div>
+
+                <nav>
+                    <ul>
+                        <li class="list-active">
+                            <a href="#">
+                                <span class="icon" id="person-icon">
+                                    <ion-icon name="person-circle"></ion-icon>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list">
+                            <a href="#">
+                                <span class="icon" id="people-icon">
+                                    <ion-icon name="people"></ion-icon>
+                                </span>
+                            </a>
+                        </li>
+                        <li class="list">
+                            <a href="#">
+                                <span class="icon">
+                                    <ion-icon name="person-add"></ion-icon>
+                                </span>
+                            </a>
+                        </li>
+                         <li class="list">
+                            <a href="#">
+                                <span class="icon">
+                                    <ion-icon name="settings-sharp"></ion-icon>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+            <div class="divider"></div>
+
+            <div class="right-side">
+                <div class="inactive-view">
+                    Start a new conversation!
+                </div>
+                <div class="active-view">
+                    <div class="right-side-header">
+                        <label for="" id="contact-name-active">Name</label>
+                    </div>
+
+                    <div class="messages">
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+
+
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch?</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+                        <!-- <div class="message received">
+                            <p class="message-content">Hey! How are you? I was thinking we could catch up this weekend and maybe check out that new cafe that just opened downtown. I've heard their coffee is amazing and the pastries are supposed to be out of this world. Let me know what you think!</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You? That sounds like a great idea. I've been meaning to get out of the house and relax a bit. Also, we could invite a few friends along if you want—it might be fun to make it a little brunch group.</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch? Actually, I was thinking we could try something adventurous like that new sushi place near the river. I've read reviews saying the chef experiments with unique flavors that you can't get anywhere else. It might be a fun experience!</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12. That works perfectly for me. I can meet you there, or if you want, I could pick you up on the way. Also, maybe we should make a reservation since the place seems to be getting popular really quickly.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you? By the way, did you get a chance to read that article I sent yesterday? It was about sustainable living and the small changes we can make in our daily routines to reduce waste. I thought it had some really interesting tips that we could try out together!</p>
+                            <span class="message-time">10:05 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You? Yes, I read it. I particularly liked the part about composting and reducing single-use plastics. Maybe we could even start a small project together and see how much impact we can make in our neighborhood. It could be fun and meaningful!</p>
+                            <span class="message-time">10:06 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch? Also, I wanted to ask if you remembered to RSVP for the event next week. They mentioned there would be some surprise guests and a few interesting workshops, so it might be fun if we attend together.</p>
+                            <span class="message-time">10:07 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12. I did RSVP, and I’m really looking forward to it. I think the workshops on photography and creative writing will be quite inspiring. Plus, it’s always nice to meet new people and exchange ideas. Can't wait!</p>
+                            <span class="message-time">10:08 AM</span>
+                        </div> -->
+
+
+
+
+
+
+
+
+                        <!-- <div class="message received">
+                            <p class="message-content">Hey! How are you doing today? I was thinking we could plan a long weekend trip to the mountains or maybe the beach. It would be a nice escape from work and city life. What do you think?</p>
+                            <span class="message-time">10:00 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You? That sounds amazing. I've been wanting to disconnect and enjoy some nature. We could also bring a few board games and a portable speaker to make it more fun. Are you free this weekend?</p>
+                            <span class="message-time">10:01 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch? Also, we should consider checking out that new Italian restaurant that opened last week. They supposedly have a signature truffle pasta that’s getting rave reviews. It could be a perfect stop before heading out on our trip.</p>
+                            <span class="message-time">10:03 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12. I’ve heard about that place too. Maybe we can try the truffle pasta and some appetizers to share. Oh, and we should probably make a reservation because it gets crowded quickly, especially around lunchtime.</p>
+                            <span class="message-time">10:04 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! Just wanted to check if you saw the new exhibit at the art gallery downtown. It’s all about modern sculptures and interactive installations. Some of the pieces are huge and incredibly detailed. I thought it would be fun to visit this weekend as well.</p>
+                            <span class="message-time">10:05 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You? That sounds interesting! I love interactive exhibits. We could spend the morning at the gallery, take some photos, and then head to lunch. It would be a nice change from our usual routine.</p>
+                            <span class="message-time">10:06 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch? By the way, did you finish reading that book I lent you last month? It’s filled with inspiring stories and life lessons. I think you’ll really enjoy the chapters about resilience and creativity.</p>
+                            <span class="message-time">10:07 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12. I actually just finished it yesterday. The part about facing challenges without losing hope really resonated with me. I’d love to discuss it more with you over lunch. Maybe we can even plan a small book swap event with friends.</p>
+                            <span class="message-time">10:08 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! How are you? I was also thinking that we could start a mini gardening project at home. Plant some herbs and small vegetables. It’s quite relaxing, and the fresh produce will be really nice. Plus, it could be a fun weekend activity together.</p>
+                            <span class="message-time">10:09 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You? Gardening sounds like a great idea. We could start with easy-to-grow herbs like basil, mint, and rosemary. And maybe later try cherry tomatoes or small peppers. It’s exciting to see something grow from scratch!</p>
+                            <span class="message-time">10:10 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch? Also, I found a new hiking trail that’s supposed to have an incredible waterfall view. It’s about a 5-mile loop, not too hard but very scenic. We could plan a morning hike and then grab lunch afterward.</p>
+                            <span class="message-time">10:11 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12. That trail sounds perfect! I’m always up for some fresh air and scenic views. We can pack a small picnic or grab something from a cafe nearby. It’ll be a full day adventure!</p>
+                            <span class="message-time">10:12 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Hey! I also discovered a new coffee shop that has an amazing rooftop view of the city. They serve artisanal coffee and freshly baked pastries. We could stop by there for a mid-morning caffeine boost before starting our activities.</p>
+                            <span class="message-time">10:13 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">I'm good, thanks! You? I love rooftop cafes! It sounds like the perfect spot to relax and catch up. We can enjoy the view, take some pictures, and maybe try their signature latte. It’ll be a nice break in between our plans.</p>
+                            <span class="message-time">10:14 AM</span>
+                        </div>
+                        <div class="message received">
+                            <p class="message-content">Doing well! Are you free for lunch? Also, I’ve been thinking we could start a small DIY project at home. Like painting a canvas together or making handmade decorations. It’s a creative way to spend time and have something memorable at the end.</p>
+                            <span class="message-time">10:15 AM</span>
+                        </div>
+                        <div class="message sent">
+                            <p class="message-content">Yes, let's go at 12. That sounds like a lot of fun! We can gather some paints, brushes, and maybe a few reference photos. It’s always fun to create something with your own hands. Plus, it’ll be a great memory of our weekend activities.</p>
+                            <span class="message-time">10:16 AM</span>
+                        </div> -->
+                        
+                    </div>
+
+
+                    
+                    <div class="message-input">
+                        <input type="text" autocomplete="off" placeholder="Type a message..."/>
+                        <button class="send-btn" aria-label="Send message">
+                            <ion-icon name="send-sharp"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>  
+        <script src="/JS/main.js"></script>
+    </body>
+</html>

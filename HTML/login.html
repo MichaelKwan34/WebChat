@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>WebChat</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/CSS/login.css">
+        <script src='https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js'></script>
+        <script src='https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js'></script>
+    </head>
+    <body>
+        <section>
+            <div class="login-form">
+                <form action="">
+                    <h1>Login</h1>
+                    <div class="inputbox">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" autocomplete="off" required id="usernameLogin">
+                        <label for="">Username</label>
+                    </div>
+                    <div class="inputbox">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input type="password" autocomplete="off" required id="passwordLogin">
+                        <label for="">Password</label>
+                    </div>
+                    <div class="forgot">
+                        <label>
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <label>
+                            <a href="#" id="forgotLink">Forgot password?</a>
+                        </label>
+                    </div>
+                    <button id="loginBtn">Login</button>
+                    <div class="register">
+                        <p>Don't have a account ? <a href="#" id="registerLink">Register</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <div class="register-form">
+                <form action="">
+                    <div class="registration-header">
+                        <ion-icon name="arrow-back" id="registerBackIcon"></ion-icon>
+                        <h1>Create Account</h1>
+                    </div>
+
+                    <div class="inputbox">
+                        <ion-icon name="person-outline"></ion-icon>
+                        <input type="text" autocomplete="off" required id="usernameRegister">
+                        <label for="">Username</label>
+                    </div>
+                    <div class="inputbox">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input type="text" autocomplete="off" required id="emailRegister">
+                        <label for="">Email</label>
+                    </div>
+                    <div class="inputbox">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input type="password" autocomplete="off" required id="passwordRegister">
+                        <label for="">Password</label>
+                    </div>
+                    <button id="registerBtn">Register</button>
+                </form>
+            </div>
+
+            <div class="forgot-form">
+                <form action="">
+                    <div class="forgot-header">
+                        <ion-icon name="arrow-back" id="resetBackIcon"></ion-icon>
+                        <h1>Reset Password</h1>
+                    </div>
+
+                    <div class="inputbox">
+                        <ion-icon name="mail-outline"></ion-icon>
+                        <input type="text" autocomplete="off" required id="emailReset">
+                        <label for="">Email</label>
+                    </div>
+
+                    <button id="continueBtn">Continue</button>
+                </form>
+            </div>
+
+            <div class="otp-form">
+                <form action="">
+                    <div class="otp-header">
+                        <ion-icon name="arrow-back" id="otpBackIcon"></ion-icon>
+                        <h1>Verify Your Email</h1>
+                    </div>  
+                    <div class="otpInputs">
+                        <input type="tel" maxlength="1" inputmode="numeric" class="otp-box" autocomplete="off" required>
+                        <input type="tel" maxlength="1" inputmode="numeric" class="otp-box" autocomplete="off" required>
+                        <input type="tel" maxlength="1" inputmode="numeric" class="otp-box" autocomplete="off" required>
+                        <input type="tel" maxlength="1" inputmode="numeric" class="otp-box" autocomplete="off" required>
+                        <input type="tel" maxlength="1" inputmode="numeric" class="otp-box" autocomplete="off" required>
+                        <input type="tel" maxlength="1" inputmode="numeric" class="otp-box" autocomplete="off" required>
+                    </div>
+                    <button id="submitOTPBtn">Continue</button>
+                </form>
+            </div>
+
+            <div class="reset-form"> 
+                <form action="">
+                    <div class="reset-header">
+                        <ion-icon name="arrow-back" id="newPassBackIcon"></ion-icon>
+                        <h1>New Password</h1>
+                    </div>
+                    <div class="inputbox">
+                        <ion-icon name="lock-closed-outline"></ion-icon>
+                        <input type="password" autocomplete="off" required id="passwordReset">
+                        <label for="">Password</label>
+                    </div>
+                    <button id="resetBtn">Reset</button>
+                </form>
+            </div>
+
+        </section>
+        <script src="/JS/login.js"></script>
+    </body>
+</html>
