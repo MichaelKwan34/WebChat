@@ -103,18 +103,39 @@ function resetInput(form) {
   }
 }
 
-function validateLogin() {
+async function login(username, password){
+  try {
+    const res = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
 
+    const data = await res.json();
+    return data.match;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
 }
 
 // Check if username already exists in the database
-function validateUsername() {
-  // DB related code
-  return true
+async function isUsernameAvailable(username) {
+  const res = await fetch(`http://localhost:3000/users/check-username?username=${username}`);
+  const data = await res.json();
+  return data.available;
 }
 
+// Check if email already exists in the database
+async function isEmailAvailable(email) {
+  const res = await fetch(`http://localhost:3000/users/check-email?email=${email}`);
+  const data = await res.json();
+  return data.available;
+}
+
+
 // Check email format
-function validateEmail(email) {
+function validateEmailFormat(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email.trim());
 }
@@ -197,32 +218,6 @@ newPassBackIcon.addEventListener('click', function(e) {
 
 
 // Button Handler
-loginBtn.addEventListener('click', function(e) {
-  // add valididation later
-  window.location.href = "/HTML/main.html"
-});
-
-registerBtn.addEventListener('click', function(e) {
-  e.preventDefault();
-
-  if (validateUsername(usernameRegister.value) && validateEmail(emailRegister.value) && validatePassword(passwordRegister.value)) {
-    usernameLogin.value = usernameRegister.value;
-    passwordLogin.value = passwordRegister.value;
-    resetInput("register")
-    hideForm("register")
-    showForm("login")
-  }
-  else {
-    // Raise alerts
-    if (!validateUsername(usernameRegister.value)) {
-    }
-    if (!validateEmail(emailRegister.value)) {
-    } 
-    if (!validatePassword(passwordRegister.value)) {
-    }
-  }
-});
-
 continueBtn.addEventListener('click', function(e) {
   e.preventDefault(); 
 
@@ -280,4 +275,94 @@ otpBoxes.forEach((box, index) => {
       otpBoxes[index - 1].focus();
     }
   });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// NEED TO IMPLEMENT SESSION USING JWT
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = usernameLogin.value;
+  const password = passwordLogin.value;
+
+  const match = await login(username, password);
+
+  if (match) {
+    window.location.href = "/frontend/main.html";
+  }
+  else {
+    alert("Username or password is incorrect");
+  }
+});
+
+
+registerForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = usernameRegister.value;
+  const email = emailRegister.value;
+  const password = passwordRegister.value;
+
+  const usernameAvailable = await isUsernameAvailable(username);
+  if (!usernameAvailable) {
+    alert("Username already taken")
+    return
+  }
+
+  if (!validateEmailFormat(email)) {
+    alert("Email format invalid")
+    return
+  }
+
+  const emailAvailable = await isEmailAvailable(email);
+  if (!emailAvailable) {
+    alert("Email already taken")
+    return
+  }
+
+  if (!validatePassword(password)) {
+    alert("Password invalid")
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"}, 
+      body: JSON.stringify({username, email, password})
+    });
+    const data = await res.json();
+    console.log(data);
+
+    if (res.ok) {
+      usernameLogin.value = username;
+      passwordLogin.value = password;
+      resetInput("register");
+      hideForm("register");
+      showForm("login");
+    }
+    else {
+      // Display error
+      alert(data.message || "Registration failed");
+    }
+  } 
+  catch (err) {
+    console.error(err);
+    alert("Server error. Try again later.");
+  }
 });
