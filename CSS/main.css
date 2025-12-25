@@ -262,27 +262,27 @@ nav ul li a #person-icon {
   max-width: 70%;
   padding: 8px 12px;
   border-radius: 15px;
-  font-size: 14px;
+  font-size: 15px;
   word-wrap: break-word;
   position: relative;
+  margin: 8px 8px 8px 17px;
 }
 
 .message.sent {
   align-self: flex-end;
-  background-color: #4f8cff;
+  background-color: rgba(120, 170, 255, 0.25);;
   color: white;
   border-bottom-right-radius: 0;
 }
 
 .message.received {
   align-self: flex-start;
-  background-color: #e5e5ea;
-  color: black;
+  background-color: rgba(255,255,255,0.2);
   border-bottom-left-radius: 0;
 }
 
 .message-time {
-  font-size: 10px;
+  font-size: 14px;
   opacity: 0.6;
   margin-top: 2px;
   display: block;
@@ -303,6 +303,7 @@ nav ul li a #person-icon {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
+  padding: 7px 0px;
 }
 
 .messages::-webkit-scrollbar {
