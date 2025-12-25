@@ -45,6 +45,20 @@ app.get("/users", async (req, res) => {
     }
 });
 
+// Check if username is taken or not
+app.get("/users/check-username", async (req, res) => {
+  const { username } = req.query;
+  const exists = await User.exists({ username });
+  res.json({ available: !exists });
+});
+
+// Check if email is taken or not
+app.get("/users/check-email", async (req, res) => {
+  const { email } = req.query;
+  const exists = await User.exists({ email });
+  res.json({ available: !exists });
+});
+
 // Check username & password for login
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
@@ -65,19 +79,79 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Check if username is taken or not
-app.get("/users/check-username", async (req, res) => {
-  const { username } = req.query;
-  const exists = await User.exists({ username });
-  res.json({ available: !exists });
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  
+  if (user) {
+    const code = Math.floor(100000 + Math.random() * 900000);
+    user.resetCode = code; // hash later
+    user.resetCodeExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+    await user.save();
+    // sendEmail(email, code);
+  }
+  
+  res.json({
+    message: "Verification code has been sent"
+  });
 });
 
-// Check if email is taken or not
-app.get("/users/check-email", async (req, res) => {
-  const { email } = req.query;
-  const exists = await User.exists({ email });
-  res.json({ available: !exists });
+app.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res.status(400).json({ message: "Email and OTP are required" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+    
+    if (!user || !user.resetCode || !user.resetCodeExpires) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    // compare the hash code later
+    if (otp !== user.resetCode || user.resetCodeExpires < Date.now()) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
+
+    user.resetCode = undefined;
+    user.resetCodeExpires = undefined;
+    await user.save();
+    res.json({ 
+      message: "OTP verified. You can now reset your password." ,
+      isMatch: true
+    });
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
+app.post("/change-password", async (req, res) => {
+  try {
+    const { email, password} = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    } 
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(201).json({ message: "Change password successfully" });
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to change password"});
+  }
+ 
+});
 
 app.listen(3000, () => { console.log("Server running on port 3000"); });

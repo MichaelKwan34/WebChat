@@ -103,37 +103,6 @@ function resetInput(form) {
   }
 }
 
-async function login(username, password){
-  try {
-    const res = await fetch("http://localhost:3000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-    return data.match;
-  } catch (err) {
-    console.error(err);
-    return false;
-  }
-}
-
-// Check if username already exists in the database
-async function isUsernameAvailable(username) {
-  const res = await fetch(`http://localhost:3000/users/check-username?username=${username}`);
-  const data = await res.json();
-  return data.available;
-}
-
-// Check if email already exists in the database
-async function isEmailAvailable(email) {
-  const res = await fetch(`http://localhost:3000/users/check-email?email=${email}`);
-  const data = await res.json();
-  return data.available;
-}
-
-
 // Check email format
 function validateEmailFormat(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -144,10 +113,6 @@ function validateEmailFormat(email) {
 function validatePassword(password) {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
   return regex.test(password);
-}
-
-// SKIP for now
-function validateOTP(){
 }
 
 
@@ -291,7 +256,21 @@ otpBoxes.forEach((box, index) => {
 
 
 
+async function login(username, password){
+  try {
+    const res = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    });
 
+    const data = await res.json();
+    return data.match;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
 
 // NEED TO IMPLEMENT SESSION USING JWT
 loginForm.addEventListener("submit", async (e) => {
@@ -310,6 +289,20 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
+
+// Check if username already exists in the database
+async function isUsernameAvailable(username) {
+  const res = await fetch(`http://localhost:3000/users/check-username?username=${username}`);
+  const data = await res.json();
+  return data.available;
+}
+
+// Check if email already exists in the database
+async function isEmailAvailable(email) {
+  const res = await fetch(`http://localhost:3000/users/check-email?email=${email}`);
+  const data = await res.json();
+  return data.available;
+}
 
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -366,3 +359,160 @@ registerForm.addEventListener("submit", async (e) => {
     alert("Server error. Try again later.");
   }
 });
+
+
+
+
+
+
+
+async function forgotPassword(email) {
+  const res = await fetch("http://localhost:3000/forgot-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
+
+  if (!res.ok) {
+    throw new Error("Request failed");
+  }
+
+  return res.json();
+}
+
+// CHANGE IT TO FORGOTFORM
+continueBtn.addEventListener('click', async function(e) {
+  e.preventDefault(); 
+
+  const email = emailReset.value;
+
+  if (!validateEmailFormat(email)) {
+    alert("Email format invalid");
+    return;
+  }
+
+  try {
+    const res = await forgotPassword(email);
+    const message = res.message;
+    // display the message "Verification code has been sent"
+    hideForm("forgot");
+    showForm("otp");
+  } 
+  catch (err) {
+    alert("Something went wrong. Please try again.");
+  }
+});
+
+
+
+
+
+
+
+
+
+otpBoxes.forEach((box, index) => {
+  box.addEventListener('input', () => {
+    box.value = box.value.replace(/[^0-9]/g, '');
+
+    if (box.value) {
+      box.classList.add('filled');
+    } 
+    else {
+      box.classList.remove('filled');
+    }
+
+    if (box.value && index < otpBoxes.length - 1) {
+      otpBoxes[index + 1].focus();
+    }
+  });
+
+  box.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !box.value && index > 0) {
+      otpBoxes[index - 1].focus();
+    }
+  });
+});
+
+async function verifyOTP(email, otp) {
+  const res = await fetch("http://localhost:3000/verify-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, otp })
+  });
+
+  if (!res.ok) {
+    throw new Error("Request failed");
+  }
+  return res.json();
+}
+
+// CHANGE IT TO OTPFORM
+submitOTPBtn.addEventListener('click', async function(e){
+  e.preventDefault();
+
+  firstCode = otpBoxes[0].value;
+  secondCode = otpBoxes[1].value;
+  thirdCode = otpBoxes[2].value;
+  fourthCode = otpBoxes[3].value;
+  fifthCode = otpBoxes[4].value;
+  sixthCode = otpBoxes[5].value;
+  const otp = firstCode + secondCode + thirdCode + fourthCode + fifthCode + sixthCode;
+  const email = emailReset.value;
+
+  const res = await verifyOTP(email, otp);
+  const isMatch = res.isMatch;
+
+  if (isMatch) {
+    hideForm("otp");
+    showForm("reset");
+  }
+  else {
+    alert("Code entered are invalid")
+  }
+});
+
+
+
+
+async function changePassword(email, password) {
+  const res = await fetch("http://localhost:3000/change-password", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  if (!res.ok) {
+    throw new Error("Change password failed");
+  }
+  return res.json();
+}
+
+// CHANGE IT TO RESETFORM
+resetBtn.addEventListener('click', async function(e){
+  e.preventDefault();
+
+  const email = emailReset.value;
+  const password = passwordReset.value;
+
+  if (validatePassword(password)) {
+    const res = await changePassword(email, password);
+    const message = res.message; 
+    // display the "change password successfully" message
+
+    hideForm("reset")
+    showForm("login")
+    
+    resetInput("forgot")
+    resetInput("otp")
+    resetInput("reset")
+  } 
+  else {
+    alert("Invalid password format")
+  }
+});
+
+
+
+
+// NEED TO IMPLEMENT CUSTOM ALERT
