@@ -213,7 +213,7 @@ loginForm.addEventListener("submit", async (e) => {
     window.location.href = "/frontend/main.html";
   }
   else {
-    alert("Username or password is incorrect");
+    showToast("Username or password is incorrect.", "error");
   }
 });
 
@@ -241,23 +241,23 @@ registerForm.addEventListener("submit", async (e) => {
 
   const usernameAvailable = await isUsernameAvailable(username);
   if (!usernameAvailable) {
-    alert("Username already taken")
+    showToast("Oops! That username is already taken.", "error")
     return
   }
 
   if (!validateEmailFormat(email)) {
-    alert("Email format invalid")
+    showToast("Please check your email address format!", "error")
     return
   }
 
   const emailAvailable = await isEmailAvailable(email);
   if (!emailAvailable) {
-    alert("Email already taken")
+    showToast("That email address is already registered.", "error")
     return
   }
 
   if (!validatePassword(password)) {
-    alert("Password invalid")
+    showToast("Password must include letters, numbers, and a capital letter.", "error")
     return;
   }
 
@@ -276,15 +276,15 @@ registerForm.addEventListener("submit", async (e) => {
       resetInput("register");
       hideForm("register");
       showForm("login");
+      showToast("Account created successfully!", "success")
     }
     else {
-      // Display error
-      alert(data.message || "Registration failed");
+      showToast(data.message || "Registration failed. Please try again.", "error");
     }
   } 
   catch (err) {
     console.error(err);
-    alert("Server error. Try again later.");
+    showToast("Server errror. Try again later.", "error")
   }
 });
 
@@ -315,19 +315,19 @@ continueBtn.addEventListener('click', async function(e) {
   const email = emailReset.value;
 
   if (!validateEmailFormat(email)) {
-    alert("Email format invalid");
+    showToast("Please check your email address format.", "error")
     return;
   }
 
   try {
     const res = await forgotPassword(email);
     const message = res.message;
-    // display the message "Verification code has been sent"
     hideForm("forgot");
     showForm("otp");
+    showToast(message, "success")
   } 
   catch (err) {
-    alert("Something went wrong. Please try again.");
+    showToast("Something went wrong. Please try again.", "error")
   }
 });
 
@@ -388,15 +388,16 @@ submitOTPBtn.addEventListener('click', async function(e){
   const otp = firstCode + secondCode + thirdCode + fourthCode + fifthCode + sixthCode;
   const email = emailReset.value;
 
-  const res = await verifyOTP(email, otp);
-  const isMatch = res.isMatch;
+  try {
+    const res = await verifyOTP(email, otp);
 
-  if (isMatch) {
-    hideForm("otp");
-    showForm("reset");
-  }
-  else {
-    alert("Code entered are invalid")
+    if (res.isMatch === true) {
+      hideForm("otp");
+      showForm("reset");
+      showToast(res.message, "success");
+    } 
+  } catch (err) {
+    showToast("Invalid or expired OTP. Please try again.", "error");
   }
 });
 
@@ -426,21 +427,62 @@ resetBtn.addEventListener('click', async function(e){
   if (validatePassword(password)) {
     const res = await changePassword(email, password);
     const message = res.message; 
-    // display the "change password successfully" message
-
     hideForm("reset")
     showForm("login")
-    
+
     resetInput("forgot")
     resetInput("otp")
     resetInput("reset")
+
+    showToast(message, "success")
   } 
   else {
-    alert("Invalid password format")
+    showToast("Password must include letters, numbers, and a capital letter.", "error")
   }
 });
 
+let activeToast = null;
 
+function showToast(message, type = "success") {
+  let toastBG;
 
+  switch (type) {
+    case "success":
+      toastBG = "#499167"
+      break;
 
-// NEED TO IMPLEMENT CUSTOM ALERT
+    case "error":
+      toastBG = "#B31D34"
+      break;
+  }
+
+  if (activeToast) {
+    activeToast.hideToast();
+    activeToast = null;
+  }
+
+  activeToast = Toastify({
+    text: message,
+    duration: 2500,
+    gravity: "top",
+    position: "center",
+    style: {
+      background: toastBG,
+      color: "#e7ecef",
+      borderRadius: "18px",
+      padding: "14px 18px",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+      backdropFilter: "blur(12px)",
+      border: "1px solid rgba(255,255,255,0.18)",
+      fontSize: "1em",
+      fontWeight: "bold",
+      userSelect: "none",
+      pointerEvents: "none"
+    },
+    onClose: () => {
+      activeToast = null;
+    }
+  });
+
+  activeToast.showToast();
+}

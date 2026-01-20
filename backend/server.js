@@ -25,11 +25,11 @@ app.post("/register", async (req, res) => {
         const newUser = new User({username, email, password:hashedPassword});
         await newUser.save();
 
-        res.status(201).json({ message: "Account Created", user: newUser});
+        res.status(201).json({ message: "Account Created Successfully!", user: newUser});
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to create an account"});
+        res.status(500).json({ error: "Failed to create an account."});
     }
 });
 
@@ -41,7 +41,7 @@ app.get("/users", async (req, res) => {
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to get users" });
+        res.status(500).json({ error: "Failed to get users." });
     }
 });
 
@@ -67,7 +67,7 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-        return res.status(404).json({ match: false, message: "User not found"});
+        return res.status(404).json({ match: false, message: "User not found."});
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -75,7 +75,7 @@ app.post("/login", async (req, res) => {
   }
   catch (err) {
     console.error(err);
-    res.status(500).json({ match: false, message: "Server error" });
+    res.status(500).json({ match: false, message: "Server error." });
   }
 });
 
@@ -93,7 +93,7 @@ app.post("/forgot-password", async (req, res) => {
   }
   
   res.json({
-    message: "Verification code has been sent"
+    message: "Verification code has been sent!"
   });
 });
 
@@ -101,32 +101,32 @@ app.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
 
   if (!email || !otp) {
-    return res.status(400).json({ message: "Email and OTP are required" });
+    return res.status(400).json({ isMatch: false, message: "Email and OTP are required!" });
   }
 
   try {
     const user = await User.findOne({ email });
     
     if (!user || !user.resetCode || !user.resetCodeExpires) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
+      return res.status(400).json({ isMatch: false, message: "Invalid or expired OTP!" });
     }
 
     // compare the hash code later
     if (otp !== user.resetCode || user.resetCodeExpires < Date.now()) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
+      return res.status(400).json({ isMatch: false, message: "Invalid or expired OTP!" });
     }
 
     user.resetCode = undefined;
     user.resetCodeExpires = undefined;
     await user.save();
     res.json({ 
-      message: "OTP verified. You can now reset your password." ,
+      message: "OTP verified! You can now reset your password." ,
       isMatch: true
     });
   }
   catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error." });
   }
 });
 
@@ -136,7 +136,7 @@ app.post("/change-password", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "User not found" });
+      return res.status(400).json({ error: "User not found." });
     } 
 
     const saltRounds = 10;
@@ -145,13 +145,13 @@ app.post("/change-password", async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
-    res.status(201).json({ message: "Change password successfully" });
+    res.status(201).json({ message: "Password changed successfully!" });
   }
   catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to change password"});
+    res.status(500).json({ error: "Failed to change password."});
   }
  
 });
 
-app.listen(3000, () => { console.log("Server running on port 3000"); });
+app.listen(3000, () => { console.log("Server running on port 3000."); });
