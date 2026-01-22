@@ -29,7 +29,7 @@ app.post("/register", async (req, res) => {
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to create an account."});
+        res.status(500).json({ error: "Failed to create an account"});
     }
 });
 
@@ -41,7 +41,7 @@ app.get("/users", async (req, res) => {
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to get users." });
+        res.status(500).json({ error: "Failed to get users" });
     }
 });
 
@@ -67,7 +67,7 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-        return res.status(404).json({ match: false, message: "User not found."});
+        return res.status(404).json({ match: false, message: "User not found"});
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -75,7 +75,7 @@ app.post("/login", async (req, res) => {
   }
   catch (err) {
     console.error(err);
-    res.status(500).json({ match: false, message: "Server error." });
+    res.status(500).json({ match: false, message: "Server error" });
   }
 });
 
@@ -126,7 +126,7 @@ app.post("/verify-otp", async (req, res) => {
   }
   catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error." });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -136,7 +136,7 @@ app.post("/change-password", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "User not found." });
+      return res.status(400).json({ error: "User not found" });
     } 
 
     const saltRounds = 10;
@@ -149,9 +149,9 @@ app.post("/change-password", async (req, res) => {
   }
   catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to change password."});
+    res.status(500).json({ error: "Failed to change password"});
   }
  
 });
 
-app.listen(3000, () => { console.log("Server running on port 3000."); });
+app.listen(3000, () => { console.log("Server running on port 3000..."); });

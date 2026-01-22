@@ -1,3 +1,5 @@
+import { showToast } from "./toast.js";
+
 // Forms
 const loginForm = document.querySelector('.login-form');
 const registerForm = document.querySelector('.register-form');
@@ -115,11 +117,6 @@ function validatePassword(password) {
   return regex.test(password);
 }
 
-
-
-
-
-
 // Register Form Displayer
 registerLink.addEventListener('click', function(e) {
   e.preventDefault();
@@ -138,12 +135,7 @@ forgotLink.addEventListener('click', function(e){
   resetInput("login");
 });
 
-
-
-
-
-
-// BackButton Handler
+// BackButton Handlers
 registrationBackIcon.addEventListener('click', function(e) {
   e.preventDefault();
 
@@ -176,13 +168,6 @@ newPassBackIcon.addEventListener('click', function(e) {
   resetInput("reset")
   resetInput("otp")
 });
-
-
-
-
-
-
-
 
 async function login(username, password){
   try {
@@ -217,7 +202,6 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
-
 // Check if username already exists in the database
 async function isUsernameAvailable(username) {
   const res = await fetch(`http://localhost:3000/users/check-username?username=${username}`);
@@ -241,23 +225,23 @@ registerForm.addEventListener("submit", async (e) => {
 
   const usernameAvailable = await isUsernameAvailable(username);
   if (!usernameAvailable) {
-    showToast("Oops! That username is already taken.", "error")
+    showToast("Oops! That username is already taken", "error")
     return
   }
 
   if (!validateEmailFormat(email)) {
-    showToast("Please check your email address format!", "error")
+    showToast("Please check your email address format", "error")
     return
   }
 
   const emailAvailable = await isEmailAvailable(email);
   if (!emailAvailable) {
-    showToast("That email address is already registered.", "error")
+    showToast("That email address is already registered", "error")
     return
   }
 
   if (!validatePassword(password)) {
-    showToast("Password must include letters, numbers, and a capital letter.", "error")
+    showToast("Password must include letters, numbers, and a capital letter", "error")
     return;
   }
 
@@ -279,20 +263,13 @@ registerForm.addEventListener("submit", async (e) => {
       showToast("Account created successfully!", "success")
     }
     else {
-      showToast(data.message || "Registration failed. Please try again.", "error");
+      showToast("Registration failed. Please try again.", "error");
     }
   } 
   catch (err) {
-    console.error(err);
     showToast("Server errror. Try again later.", "error")
   }
 });
-
-
-
-
-
-
 
 async function forgotPassword(email) {
   const res = await fetch("http://localhost:3000/forgot-password", {
@@ -308,14 +285,13 @@ async function forgotPassword(email) {
   return res.json();
 }
 
-// CHANGE IT TO FORGOTFORM
 continueBtn.addEventListener('click', async function(e) {
   e.preventDefault(); 
 
   const email = emailReset.value;
 
   if (!validateEmailFormat(email)) {
-    showToast("Please check your email address format.", "error")
+    showToast("Please check your email address format", "error")
     return;
   }
 
@@ -330,14 +306,6 @@ continueBtn.addEventListener('click', async function(e) {
     showToast("Something went wrong. Please try again.", "error")
   }
 });
-
-
-
-
-
-
-
-
 
 otpBoxes.forEach((box, index) => {
   box.addEventListener('input', () => {
@@ -370,22 +338,15 @@ async function verifyOTP(email, otp) {
   });
 
   if (!res.ok) {
-    throw new Error("Request failed");
+    throw new Error(res.message || "OTP verification failed. Please try again.");
   }
   return res.json();
 }
 
-// CHANGE IT TO OTPFORM
 submitOTPBtn.addEventListener('click', async function(e){
   e.preventDefault();
 
-  firstCode = otpBoxes[0].value;
-  secondCode = otpBoxes[1].value;
-  thirdCode = otpBoxes[2].value;
-  fourthCode = otpBoxes[3].value;
-  fifthCode = otpBoxes[4].value;
-  sixthCode = otpBoxes[5].value;
-  const otp = firstCode + secondCode + thirdCode + fourthCode + fifthCode + sixthCode;
+  const otp = Array.from(otpBoxes).map(box => box.value).join("");
   const email = emailReset.value;
 
   try {
@@ -401,9 +362,6 @@ submitOTPBtn.addEventListener('click', async function(e){
   }
 });
 
-
-
-
 async function changePassword(email, password) {
   const res = await fetch("http://localhost:3000/change-password", {
     method: "POST",
@@ -417,7 +375,6 @@ async function changePassword(email, password) {
   return res.json();
 }
 
-// CHANGE IT TO RESETFORM
 resetBtn.addEventListener('click', async function(e){
   e.preventDefault();
 
@@ -437,52 +394,6 @@ resetBtn.addEventListener('click', async function(e){
     showToast(message, "success")
   } 
   else {
-    showToast("Password must include letters, numbers, and a capital letter.", "error")
+    showToast("Password must include letters, numbers, and a capital letter", "error")
   }
 });
-
-let activeToast = null;
-
-function showToast(message, type = "success") {
-  let toastBG;
-
-  switch (type) {
-    case "success":
-      toastBG = "#499167"
-      break;
-
-    case "error":
-      toastBG = "#B31D34"
-      break;
-  }
-
-  if (activeToast) {
-    activeToast.hideToast();
-    activeToast = null;
-  }
-
-  activeToast = Toastify({
-    text: message,
-    duration: 2500,
-    gravity: "top",
-    position: "center",
-    style: {
-      background: toastBG,
-      color: "#e7ecef",
-      borderRadius: "18px",
-      padding: "14px 18px",
-      boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
-      backdropFilter: "blur(12px)",
-      border: "1px solid rgba(255,255,255,0.18)",
-      fontSize: "1em",
-      fontWeight: "bold",
-      userSelect: "none",
-      pointerEvents: "none"
-    },
-    onClose: () => {
-      activeToast = null;
-    }
-  });
-
-  activeToast.showToast();
-}
