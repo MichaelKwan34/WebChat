@@ -4,6 +4,7 @@ import User from "./models/User.js"
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 dotenv.config();
 
@@ -79,6 +80,34 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Send OTP code
+const mailerSend = new MailerSend({
+   apiKey: process.env.MAILERSEND_TOKEN,
+});
+
+async function sendEmail(email, code) {
+  const user = await User.findOne({ email });
+  const sentFrom = new Sender("no-reply@test-nrw7gymnxkog2k8e.mlsender.net", "WebChat");
+  const recipients = [new Recipient(email, user.username)];
+
+  const emailParams = new EmailParams()
+    .setFrom(sentFrom)
+    .setTo(recipients)
+    .setSubject("Your OTP Code")
+    .setHtml(`
+      <p>Your verification code is:</p>
+      <h1>${code}</h1>
+      <p>This code will expire in 10 minutes.</p>
+    `)
+    .setText(`Your OTP code is ${code}. It will expire in 10 minutes.`);
+
+    try {
+      await mailerSend.email.send(emailParams);
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+}
+
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
 
@@ -89,7 +118,12 @@ app.post("/forgot-password", async (req, res) => {
     user.resetCode = code; // hash later
     user.resetCodeExpires = Date.now() + 10 * 60 * 1000; // 10 mins
     await user.save();
-    // sendEmail(email, code);
+   
+    try {
+      await sendEmail(email, code);
+    } catch (err) {
+      return res.status(500).json({ message: "Failed to send OTP email" });
+    }
   }
   
   res.json({
