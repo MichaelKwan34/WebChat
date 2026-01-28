@@ -80,7 +80,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Send OTP code
+// Send OTP code via MailerSend API
 const mailerSend = new MailerSend({
    apiKey: process.env.MAILERSEND_TOKEN,
 });
