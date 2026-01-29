@@ -4,6 +4,7 @@ import User from "./models/User.js"
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 dotenv.config();
@@ -26,11 +27,10 @@ app.post("/register", async (req, res) => {
         const newUser = new User({username, email, password:hashedPassword});
         await newUser.save();
 
-        res.status(201).json({ message: "Account Created Successfully!", user: newUser});
+        res.status(201).json({ message: "Account Created Successfully!" });
     }
     catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to create an account"});
+        res.status(500).json({ message: "Failed to create an account" });
     }
 });
 
@@ -41,8 +41,7 @@ app.get("/users", async (req, res) => {
         res.json(users);
     }
     catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to get users" });
+        res.status(500).json({ message: "Failed to get users" });
     }
 });
 
@@ -75,15 +74,12 @@ app.post("/login", async (req, res) => {
     res.json({ match: isMatch });
   }
   catch (err) {
-    console.error(err);
-    res.status(500).json({ match: false, message: "Server error" });
+    res.status(500).json({ match: false, message: "Server error (Login)" });
   }
 });
 
 // Send OTP code via MailerSend API
-const mailerSend = new MailerSend({
-   apiKey: process.env.MAILERSEND_TOKEN,
-});
+const mailerSend = new MailerSend({ apiKey: process.env.MAILERSEND_TOKEN });
 
 async function sendEmail(email, code) {
   const user = await User.findOne({ email });
@@ -103,11 +99,12 @@ async function sendEmail(email, code) {
 
     try {
       await mailerSend.email.send(emailParams);
-    } catch (error) {
-      console.error("Failed to send email:", error);
+    } catch (err) {
+      return res.status(500).json({ message: "Failed to send email" });
     }
 }
 
+// Send OTP code to the specified email
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
 
@@ -115,8 +112,9 @@ app.post("/forgot-password", async (req, res) => {
   
   if (user) {
     const code = Math.floor(100000 + Math.random() * 900000);
-    user.resetCode = code; // hash later
+    user.resetCode = crypto.createHmac("sha256", process.env.OTP_SECRET).update(code.toString()).digest("hex");
     user.resetCodeExpires = Date.now() + 10 * 60 * 1000; // 10 mins
+    user.resetCodeAttempts = 0;
     await user.save();
    
     try {
@@ -126,11 +124,10 @@ app.post("/forgot-password", async (req, res) => {
     }
   }
   
-  res.json({
-    message: "Verification code has been sent!"
-  });
+  res.json({ message: "Verification code has been sent!" });
 });
 
+// Verify OTP code
 app.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
 
@@ -141,36 +138,59 @@ app.post("/verify-otp", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     
-    if (!user || !user.resetCode || !user.resetCodeExpires) {
+    // Expiration check
+    if (!user || !user.resetCode || !user.resetCodeExpires || user.resetCodeExpires < Date.now()) {
+      if (user) {
+        user.resetCode = undefined;
+        user.resetCodeExpires = undefined;
+        user.resetCodeAttempts = undefined;
+        await user.save();
+      }
+
       return res.status(400).json({ isMatch: false, message: "Invalid or expired OTP!" });
     }
 
-    // compare the hash code later
-    if (otp !== user.resetCode || user.resetCodeExpires < Date.now()) {
+    const inputHash = crypto.createHmac("sha256", process.env.OTP_SECRET).update(otp.toString()).digest("hex");
+
+    user.resetCodeAttempts = (user.resetCodeAttempts || 0) + 1; // if the user.resetCodeAttempts is falsy ("undefined", "null", etc) set fall back to 0
+
+    // Verify OTP
+    if (inputHash !== user.resetCode) {
+      await user.save();
+
+      if (user.resetCodeAttempts >= 5) {
+        user.resetCode = undefined;
+        user.resetCodeExpires = undefined;
+        user.resetCodeAttempts = undefined;
+        await user.save();
+      }
       return res.status(400).json({ isMatch: false, message: "Invalid or expired OTP!" });
     }
 
+    // OTP verified successfully
     user.resetCode = undefined;
     user.resetCodeExpires = undefined;
+    user.resetCodeAttempts = undefined;
     await user.save();
+
     res.json({ 
       message: "OTP verified! You can now reset your password." ,
       isMatch: true
     });
   }
   catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error (OTP)" });
   }
 });
 
+// Change user's password
 app.post("/change-password", async (req, res) => {
   try {
     const { email, password} = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "User not found" });
+      return res.status(400).json({ message: "User not found" });
     } 
 
     const saltRounds = 10;
@@ -182,10 +202,8 @@ app.post("/change-password", async (req, res) => {
     res.status(201).json({ message: "Password changed successfully!" });
   }
   catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to change password"});
+    res.status(500).json({ message: "Failed to change password"});
   }
- 
 });
 
 app.listen(3000, () => { console.log("Server running on port 3000..."); });

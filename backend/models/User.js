@@ -5,7 +5,8 @@ const UserSchema = new mongoose.Schema({
     email: {type: String, required: true, unique:true},
     password: {type: String, required: true},
     resetCode: {type: String},
-    resetCodeExpires: {type: Date}
+    resetCodeExpires: {type: Date},
+    resetCodeAttempts: {type: Number}
 });
 
 export default mongoose.model("User", UserSchema);

@@ -189,7 +189,7 @@ async function login(username, password){
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const username = usernameLogin.value;
+  const username = usernameLogin.value.trim().toLowerCase();
   const password = passwordLogin.value;
 
   const match = await login(username, password);
@@ -219,8 +219,8 @@ async function isEmailAvailable(email) {
 registerForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const username = usernameRegister.value;
-  const email = emailRegister.value;
+  const username = usernameRegister.value.trim().toLowerCase();
+  const email = emailRegister.value.trim().toLowerCase();
   const password = passwordRegister.value;
 
   const usernameAvailable = await isUsernameAvailable(username);
@@ -288,7 +288,7 @@ async function forgotPassword(email) {
 continueBtn.addEventListener('click', async function(e) {
   e.preventDefault(); 
 
-  const email = emailReset.value;
+  const email = emailReset.value.trim().toLowerCase();
 
   if (!validateEmailFormat(email)) {
     showToast("Please check your email address format", "error")
@@ -297,10 +297,9 @@ continueBtn.addEventListener('click', async function(e) {
 
   try {
     const res = await forgotPassword(email);
-    const message = res.message;
     hideForm("forgot");
     showForm("otp");
-    showToast(message, "success")
+    showToast(res.message, "success")
   } 
   catch (err) {
     showToast("Something went wrong. Please try again.", "error")
@@ -347,7 +346,7 @@ submitOTPBtn.addEventListener('click', async function(e){
   e.preventDefault();
 
   const otp = Array.from(otpBoxes).map(box => box.value).join("");
-  const email = emailReset.value;
+  const email = emailReset.value.trim().toLowerCase();
 
   try {
     const res = await verifyOTP(email, otp);
@@ -378,12 +377,11 @@ async function changePassword(email, password) {
 resetBtn.addEventListener('click', async function(e){
   e.preventDefault();
 
-  const email = emailReset.value;
+  const email = emailReset.value.trim().toLowerCase();
   const password = passwordReset.value;
 
   if (validatePassword(password)) {
     const res = await changePassword(email, password);
-    const message = res.message; 
     hideForm("reset")
     showForm("login")
 
@@ -391,7 +389,7 @@ resetBtn.addEventListener('click', async function(e){
     resetInput("otp")
     resetInput("reset")
 
-    showToast(message, "success")
+    showToast(res.message, "success")
   } 
   else {
     showToast("Password must include letters, numbers, and a capital letter", "error")
