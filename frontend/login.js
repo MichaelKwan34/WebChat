@@ -178,22 +178,22 @@ async function login(username, password){
     });
 
     const data = await res.json();
-    return data.match;
+    localStorage.setItem("token", data.token);
+    return data.token;
   } catch (err) {
     return false;
   }
 }
 
-// NEED TO IMPLEMENT SESSION USING JWT
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const username = usernameLogin.value.trim().toLowerCase();
   const password = passwordLogin.value;
 
-  const match = await login(username, password);
+  const token = await login(username, password);
 
-  if (match) {
+  if (token) {
     window.location.href = "/frontend/main.html";
   }
   else {
@@ -394,3 +394,8 @@ resetBtn.addEventListener('click', async function(e){
     showToast("Password must include letters, numbers, and a capital letter", "error")
   }
 });
+
+const token = localStorage.getItem("token");
+if (token) {
+  window.location.replace("/frontend/main.html");
+}

@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
+import jwt from "jsonwebtoken"
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
 dotenv.config();
@@ -71,7 +72,15 @@ app.post("/login", async (req, res) => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    res.json({ match: isMatch });
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {expiresIn: '1h'})
+
+    res.json({ token })
+
   }
   catch (err) {
     res.status(500).json({ match: false, message: "Server error (Login)" });
@@ -216,6 +225,21 @@ app.get("/users/:username/friends", async(req, res) => {
     }
 
     res.json({ friends: user.friends });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch friends" });
+  }
+});
+
+// Fetch user's list of groups
+app.get("/users/:username/groups", async(req, res) => {
+  try {
+    const user = await User.findOne({username: req.params.username});
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ friends: user.groups });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch friends" });
   }

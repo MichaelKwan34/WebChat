@@ -22,6 +22,25 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 let isDragging = false;
 
+let currentUser;
+
+// JWT Token
+const token = localStorage.getItem("token");
+if (!token) {
+  window.location.replace = "/frontend/login.html"
+} else {
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  currentUser = payload.username
+
+  // Display "successfully logged in" message 
+  document.addEventListener("DOMContentLoaded", () => {
+    showToast("Logged in successfully!", "success");
+    loadFriends();
+    loadGroups();
+  });
+}
+
+
 function setupListClick(listItems) {
   listItems.forEach(item => {
     item.addEventListener("click", () => {
@@ -133,12 +152,9 @@ messages.addEventListener('scroll', () => {
   }, 1000);
 });
 
-// Load friends upon login
+// Display list of Friends
 async function loadFriends() {
   try {
-
-    // FIND OUT HOW TO GET THE CURRENT USER
-    const currentUser = "abc208060"
     const res = await fetch(`http://localhost:3000/users/${currentUser}/friends`)
 
     if (!res.ok) {
@@ -171,8 +187,37 @@ async function loadFriends() {
   }
 }
 
-// Display "successfully logged in" message 
-document.addEventListener("DOMContentLoaded", () => {
-  showToast("Logged in successfully!", "success");
-  loadFriends();
-});
+// Display list of Groups
+async function loadGroups() {
+  try {
+    const res = await fetch(`http://localhost:3000/users/${currentUser}/groups`)
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch friends");
+    }
+
+    const data = await res.json();
+    
+    groupList.innerHTML = "";
+
+    data.friends.forEach(group => {
+      const li = document.createElement("li");
+      li.textContent = group;
+
+      li.addEventListener("click", () => {
+        groupListItems.forEach(li => li.classList.remove("active"));
+        li.classList.add("active");
+
+        inactive.style.display = "none";
+        active.style.display = "flex";
+        active.style.flexDirection = "column";
+        activeContactName.textContent = group;
+      });
+
+      groupList.appendChild(li);
+    });
+
+  } catch (err) {
+      showToast("Failed to load groups", "error");
+  }
+}
