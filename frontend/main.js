@@ -59,7 +59,6 @@ function filterLists() {
   });
 }
 
-setupListClick(friendListItems);
 setupListClick(groupListItems);
 
 // Divider
@@ -134,7 +133,46 @@ messages.addEventListener('scroll', () => {
   }, 1000);
 });
 
+// Load friends upon login
+async function loadFriends() {
+  try {
+
+    // FIND OUT HOW TO GET THE CURRENT USER
+    const currentUser = "abc208060"
+    const res = await fetch(`http://localhost:3000/users/${currentUser}/friends`)
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch friends");
+    }
+
+    const data = await res.json();
+    
+    friendList.innerHTML = "";
+
+    data.friends.forEach(friend => {
+      const li = document.createElement("li");
+      li.textContent = friend;
+
+      li.addEventListener("click", () => {
+        friendListItems.forEach(li => li.classList.remove("active"));
+        li.classList.add("active");
+
+        inactive.style.display = "none";
+        active.style.display = "flex";
+        active.style.flexDirection = "column";
+        activeContactName.textContent = friend;
+      });
+
+      friendList.appendChild(li);
+    });
+
+  } catch (err) {
+      showToast("Failed to load friends", "error");
+  }
+}
+
 // Display "successfully logged in" message 
 document.addEventListener("DOMContentLoaded", () => {
   showToast("Logged in successfully!", "success");
+  loadFriends();
 });

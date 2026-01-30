@@ -180,7 +180,6 @@ async function login(username, password){
     const data = await res.json();
     return data.match;
   } catch (err) {
-    console.error(err);
     return false;
   }
 }

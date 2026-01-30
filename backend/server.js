@@ -206,4 +206,19 @@ app.post("/change-password", async (req, res) => {
   }
 });
 
+// Fetch user's friends list
+app.get("/users/:username/friends", async(req, res) => {
+  try {
+    const user = await User.findOne({username: req.params.username});
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ friends: user.friends });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch friends" });
+  }
+});
+
 app.listen(3000, () => { console.log("Server running on port 3000..."); });
