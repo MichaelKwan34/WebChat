@@ -20,6 +20,8 @@ const activeContactName = document.getElementById("contact-name-active");
 const searchInput = document.getElementById("searchInput");
 const logoutBtn = document.getElementById("logoutBtn");
 
+const messagesContainer = document.querySelector(".active-view .messages");
+
 let isDragging = false;
 
 let currentUser;
@@ -37,21 +39,6 @@ if (!token) {
     showToast("Logged in successfully!", "success");
     loadFriends();
     loadGroups();
-  });
-}
-
-
-function setupListClick(listItems) {
-  listItems.forEach(item => {
-    item.addEventListener("click", () => {
-      listItems.forEach(li => li.classList.remove("active"));
-      item.classList.add("active");
-
-      inactive.style.display = 'none';
-      active.style.display = 'flex';
-      active.style.flexDirection = 'column';
-      activeContactName.textContent = item.textContent
-    });
   });
 }
 
@@ -77,8 +64,6 @@ function filterLists() {
     }
   });
 }
-
-setupListClick(groupListItems);
 
 // Divider
 divider.addEventListener('mousedown', () => {
@@ -169,7 +154,7 @@ async function loadFriends() {
       const li = document.createElement("li");
       li.textContent = friend;
 
-      li.addEventListener("click", () => {
+      li.addEventListener("click", async () => {
         friendListItems.forEach(li => li.classList.remove("active"));
         li.classList.add("active");
 
@@ -177,6 +162,15 @@ async function loadFriends() {
         active.style.display = "flex";
         active.style.flexDirection = "column";
         activeContactName.textContent = friend;
+
+        try {
+          const res = await fetch(`http://localhost:3000/conversations/${currentUser}/${friend}`);
+          const data = await res.json();
+          const conversationId = data.conversationId;
+          loadMessages(conversationId);
+        } catch (err) {
+          showToast("Failed to load conversation", "error");
+        }
       });
 
       friendList.appendChild(li);
@@ -220,4 +214,36 @@ async function loadGroups() {
   } catch (err) {
       showToast("Failed to load groups", "error");
   }
+}
+
+// Display messages for selected contact
+async function loadMessages(conversationId) {
+  const res = await fetch (`http://localhost:3000/messages/${conversationId}`);
+  const messages = await res.json();
+
+  messagesContainer.innerHTML = "";
+
+  messages.forEach(msg => {
+    const messageClass = msg.sender === currentUser ? "sent" : "received";
+
+    // Create message div
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${messageClass}`;
+
+    // Message content
+    const content = document.createElement("p");
+    content.className = "message-content";
+    content.textContent = msg.text;
+
+    // Message time
+    // const time = document.createElement("span");
+    // time.className = "message-time";
+    // time.textContent = new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    messageDiv.appendChild(content);
+    // messageDiv.appendChild(time);
+
+    messagesContainer.appendChild(messageDiv);
+  });
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }

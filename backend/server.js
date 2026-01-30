@@ -1,6 +1,9 @@
 import express from "express";
 import connectDB from "./db.js";
+import mongoose from "mongoose";
 import User from "./models/User.js"
+import Message from "./models/Message.js"
+import Conversation from "./models/Conversation.js"
 import dotenv from "dotenv";
 import cors from "cors";
 import bcrypt from "bcrypt";
@@ -242,6 +245,39 @@ app.get("/users/:username/groups", async(req, res) => {
     res.json({ friends: user.groups });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch friends" });
+  }
+});
+
+// Fetch the conversationId between users
+app.get("/conversations/:user1/:user2", async (req, res) => {
+  const { user1, user2 } = req.params;
+
+  try {
+    let conversation = await Conversation.findOne({ participants: { $all: [user1, user2] }});
+
+    if (!conversation) {
+      conversation = new Conversation ( { participants: [user1, user2] });
+      await conversation.save();
+    }
+    res.json({ conversationId: conversation._id });
+  } catch (err) {
+    res.status(500).json({ message: "Server error (Conversation)" });
+  }
+});
+
+// Fetch the user's conversation with another user
+app.get("/messages/:conversationId", async (req, res) => {
+  const { conversationId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+    return res.status(400).json({ message: "Invalid conversationId" });
+  }
+
+  try {
+    const messages = await Message.find({ conversationId }).sort({ createdAt: 1 });
+    res.json(messages);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch messages" });
   }
 });
 
