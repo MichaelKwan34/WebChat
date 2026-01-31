@@ -227,14 +227,14 @@ app.get("/users/:username/friends", async(req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ friends: user.friends });
+    res.json({ friends: user.friends.sort() });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch friends" });
   }
 });
 
-// Fetch user's list of groups
-app.get("/users/:username/groups", async(req, res) => {
+// Fetch user's list of chats
+app.get("/users/:username/chats", async(req, res) => {
   try {
     const user = await User.findOne({username: req.params.username});
 
@@ -242,7 +242,7 @@ app.get("/users/:username/groups", async(req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ friends: user.groups });
+    res.json({ friends: user.chats });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch friends" });
   }

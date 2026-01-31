@@ -197,7 +197,7 @@ loginForm.addEventListener("submit", async (e) => {
     window.location.href = "/frontend/main.html";
   }
   else {
-    showToast("Username or password is incorrect.", "error");
+    showToast("Username or password is incorrect", "error");
   }
 });
 

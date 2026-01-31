@@ -9,8 +9,8 @@ const inactive = document.querySelector('.inactive-view')
 const active = document.querySelector('.active-view')
 
 const leftHeaderText = document.getElementById("sidebar-header");
-const groupList = document.getElementById("group-lists");
-const groupListItems = document.querySelectorAll("#group-lists li");
+const chatList = document.getElementById("chat-lists");
+const chatListItems = document.querySelectorAll("#chat-lists li");
 const searchWrapper = document.querySelector('.search-wrapper');
 
 const leftSideHeader = document.querySelector(".left-side-header");
@@ -25,6 +25,7 @@ const messagesContainer = document.querySelector(".active-view .messages");
 let isDragging = false;
 
 let currentUser;
+let activeMessageName;
 
 // JWT Token
 const token = localStorage.getItem("token");
@@ -38,7 +39,7 @@ if (!token) {
   document.addEventListener("DOMContentLoaded", () => {
     showToast("Logged in successfully!", "success");
     loadFriends();
-    loadGroups();
+    loadChats();
   });
 }
 
@@ -48,10 +49,10 @@ function filterLists() {
   let activeListItems = [];
 
   if (friendList.style.display !== 'none') {
-    activeListItems = friendListItems;
+    document.querySelectorAll("#friend-lists li").forEach(li => activeListItems.push(li));
   } 
-  else if (groupList.style.display !== 'none') {
-    activeListItems = groupListItems;
+  else if (chatList.style.display !== 'none') {
+    document.querySelectorAll("#chat-lists li").forEach(li => activeListItems.push(li));
   }
 
   activeListItems.forEach(item => {
@@ -93,13 +94,12 @@ navItems.forEach((item, index) => {
     if(index === 0) {
       leftHeaderText.textContent = 'Friends';
       friendList.style.display = 'block';
-      groupList.style.display = 'none';
-      
+      chatList.style.display = 'none';
     }
     else if (index === 1) {
-      leftHeaderText.textContent = 'Groups';
+      leftHeaderText.textContent = 'Chats';
       friendList.style.display = 'none';
-      groupList.style.display = 'block';
+      chatList.style.display = 'block';
     }
     else if (index === 2) {
       leftHeaderText.textContent = 'Add Contact';
@@ -118,7 +118,7 @@ navItems.forEach((item, index) => {
     }
     else {
       friendList.style.display = 'none';
-      groupList.style.display = 'none';
+      chatList.style.display = 'none';
       searchWrapper.style.display = 'none';
       leftSideHeader.style.borderBottom = '2px solid rgba(255,255,255,0.3)';
     }
@@ -154,8 +154,12 @@ async function loadFriends() {
       const li = document.createElement("li");
       li.textContent = friend;
 
+      if (friend === activeMessageName) li.classList.add("active");
+
       li.addEventListener("click", async () => {
-        friendListItems.forEach(li => li.classList.remove("active"));
+        activeMessageName = friend;
+        document.querySelectorAll("#friend-lists li").forEach(li => { li.classList.toggle("active", li.textContent === activeMessageName) });
+        document.querySelectorAll("#chat-lists li").forEach(li => { li.classList.toggle("active", li.textContent === activeMessageName) });
         li.classList.add("active");
 
         inactive.style.display = "none";
@@ -181,10 +185,10 @@ async function loadFriends() {
   }
 }
 
-// Display list of Groups
-async function loadGroups() {
+// Display list of Chats
+async function loadChats() {
   try {
-    const res = await fetch(`http://localhost:3000/users/${currentUser}/groups`)
+    const res = await fetch(`http://localhost:3000/users/${currentUser}/chats`)
 
     if (!res.ok) {
       throw new Error("Failed to fetch friends");
@@ -192,27 +196,41 @@ async function loadGroups() {
 
     const data = await res.json();
     
-    groupList.innerHTML = "";
+    chatList.innerHTML = "";
 
-    data.friends.forEach(group => {
+    data.friends.forEach(chat => {
       const li = document.createElement("li");
-      li.textContent = group;
+      li.textContent = chat;
 
-      li.addEventListener("click", () => {
-        groupListItems.forEach(li => li.classList.remove("active"));
+      if (chat === activeMessageName) li.classList.add("active");
+
+      li.addEventListener("click", async () => {
+        activeMessageName = chat;
+        document.querySelectorAll("#friend-lists li").forEach(li => { li.classList.toggle("active", li.textContent === activeMessageName) });
+        document.querySelectorAll("#chat-lists li").forEach(li => { li.classList.toggle("active", li.textContent === activeMessageName) });
         li.classList.add("active");
 
         inactive.style.display = "none";
         active.style.display = "flex";
         active.style.flexDirection = "column";
-        activeContactName.textContent = group;
+        activeContactName.textContent = chat;
+
+         try {
+          const res = await fetch(`http://localhost:3000/conversations/${currentUser}/${chat}`);
+          const data = await res.json();
+          const conversationId = data.conversationId;
+          loadMessages(conversationId);
+        } catch (err) {
+          showToast("Failed to load conversation", "error");
+        }
+
       });
 
-      groupList.appendChild(li);
+      chatList.appendChild(li);
     });
 
   } catch (err) {
-      showToast("Failed to load groups", "error");
+      showToast("Failed to load chats", "error");
   }
 }
 
@@ -247,3 +265,8 @@ async function loadMessages(conversationId) {
   });
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
+logoutBtn.addEventListener('click', () => {
+  localStorage.removeItem("token")
+  window.location.replace("/frontend/login.html")
+});
