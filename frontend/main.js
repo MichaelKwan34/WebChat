@@ -21,6 +21,8 @@ const searchInput = document.getElementById("searchInput");
 const logoutBtn = document.getElementById("logoutBtn");
 
 const messagesContainer = document.querySelector(".active-view .messages");
+const messageInput = document.getElementById("messageInput")
+const sendButton = document.getElementById("sendButton")
 
 let isDragging = false;
 
@@ -265,6 +267,24 @@ async function loadMessages(conversationId) {
   });
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
+
+async function sendMessage(msg) {
+  console.log(msg);
+}
+
+messageInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && messageInput.value !== '') {
+    sendButton.click();
+  }
+});
+
+sendButton.addEventListener('click', () => {
+  const msg = messageInput.value;
+  messageInput.value = '';
+
+  sendMessage(msg)
+
+});
 
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem("token")
