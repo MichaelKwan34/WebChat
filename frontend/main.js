@@ -254,12 +254,12 @@ async function loadMessages(conversationId) {
     content.textContent = msg.text;
 
     // Message time
-    // const time = document.createElement("span");
-    // time.className = "message-time";
-    // time.textContent = new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const time = document.createElement("span");
+    time.className = "message-time";
+    time.textContent = new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
     messageDiv.appendChild(content);
-    // messageDiv.appendChild(time);
+    messageDiv.appendChild(time);
 
     messagesContainer.appendChild(messageDiv);
   });
