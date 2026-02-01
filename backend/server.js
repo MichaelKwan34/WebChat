@@ -256,7 +256,15 @@ app.get("/conversations/:user1/:user2", async (req, res) => {
     let conversation = await Conversation.findOne({ participants: { $all: [user1, user2] }});
 
     if (!conversation) {
+      const userA = await User.findOne({ username: user1 });
+      const userB = await User.findOne({ username: user2 })
       conversation = new Conversation ( { participants: [user1, user2] });
+
+      if (!userA.chats.includes(user2)) userA.chats.push(user2);
+      if (!userB.chats.includes(user1)) userB.chats.push(user1);
+
+      await userA.save();
+      await userB.save();
       await conversation.save();
     }
     res.json({ conversationId: conversation._id });
@@ -278,6 +286,24 @@ app.get("/messages/:conversationId", async (req, res) => {
     res.json(messages);
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch messages" });
+  }
+});
+
+// Push a message to the DB
+app.post("/messages/:conversationId", async (req, res) => {
+  const { conversationId } = req.params;
+  const { sender, msg } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+    return res.status(400).json({ message: "Invalid conversationId" });
+  }
+
+  try {
+    const message = new Message({ conversationId, sender, text: msg })
+    await message.save();
+    res.status(201).json({ message: "Message successfully sent", timeSent: message.createdAt.toISOString()});
+  } catch (err) {
+    res.status(500).json({ message: "Failed to send the message" });
   }
 });
 

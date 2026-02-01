@@ -251,7 +251,6 @@ registerForm.addEventListener("submit", async (e) => {
       body: JSON.stringify({username, email, password})
     });
     const data = await res.json();
-    console.log(data);
 
     if (res.ok) {
       usernameLogin.value = username;

@@ -268,8 +268,56 @@ async function loadMessages(conversationId) {
   messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
+// Push a message to DB
 async function sendMessage(msg) {
-  console.log(msg);
+  try {
+    let res = await fetch (`http://localhost:3000/conversations/${currentUser}/${activeMessageName}`);
+    let data = await res.json();
+    const conversationId = data.conversationId;
+
+    res = await fetch(`http://localhost:3000/messages/${conversationId}`, {
+      method: "POST",
+      headers: { 
+        "Content-Type" : "application/json",
+      },
+      body: JSON.stringify({
+        sender: currentUser,
+        msg: msg
+      })
+    });
+
+    data = await res.json();
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message);
+    }
+    messageInput.value = '';
+
+    const messageClass = "sent";
+
+    // Create message div
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${messageClass}`;
+
+    // Message content
+    const content = document.createElement("p");
+    content.className = "message-content";
+    content.textContent = msg;
+
+    // Message time
+    const time = document.createElement("span");
+    time.className = "message-time";
+    time.textContent = new Date(data.timeSent).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    messageDiv.appendChild(content);
+    messageDiv.appendChild(time);
+
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  } catch (err) {
+    showToast(err.message, "error");
+  }
 }
 
 messageInput.addEventListener("keydown", (event) => {
@@ -279,11 +327,7 @@ messageInput.addEventListener("keydown", (event) => {
 });
 
 sendButton.addEventListener('click', () => {
-  const msg = messageInput.value;
-  messageInput.value = '';
-
-  sendMessage(msg)
-
+  sendMessage(messageInput.value)
 });
 
 logoutBtn.addEventListener('click', () => {
