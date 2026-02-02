@@ -38,17 +38,6 @@ app.post("/register", async (req, res) => {
     }
 });
 
-// Get all users
-app.get("/users", async (req, res) => {
-    try {
-        const users = await User.find();
-        res.json(users);
-    }
-    catch (err) {
-        res.status(500).json({ message: "Failed to get users" });
-    }
-});
-
 // Check if username is taken or not
 app.get("/users/check-username", async (req, res) => {
   const { username } = req.query;
@@ -304,6 +293,30 @@ app.post("/messages/:conversationId", async (req, res) => {
     res.status(201).json({ message: "Message successfully sent", timeSent: message.createdAt.toISOString()});
   } catch (err) {
     res.status(500).json({ message: "Failed to send the message" });
+  }
+});
+
+// Find a user
+app.get("/users/find-user/:username", async (req, res) => {
+  const { username } = req.params;
+  const exists = await User.exists({ username });
+  res.json({ exists: exists });
+});
+
+app.post("/add-contact/:currentUser/:contactSearched", async (req, res) => {
+  const { currentUser} = req.params; 
+  const { contactSearched } = req.body;
+  try {
+    const user = await User.findOne({ username: currentUser });
+    if (!user) {
+      return res.status(404).json({ match: false, message: "User not found"});
+    } 
+
+    user.friends.push(contactSearched);
+    await user.save();
+    res.json({ message: "Successfully added a contact", success: true })
+  } catch (err) {
+    res.status(500).json({ message: "Failed to add a contact" });
   }
 });
 

@@ -323,7 +323,8 @@ nav ul li a #person-icon {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  visibility: hidden;
+  display: none;
+  /* visibility: hidden; */
 }
 
 .add-contact-wrapper {

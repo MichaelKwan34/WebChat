@@ -35,6 +35,7 @@ let isDragging = false;
 
 let currentUser;
 let activeMessageName;
+let contactSearched;
 
 // JWT Token
 const token = localStorage.getItem("token");
@@ -104,26 +105,17 @@ navItems.forEach((item, index) => {
       leftHeaderText.textContent = 'Friends';
       friendList.style.display = 'block';
       chatList.style.display = 'none';
-      addContactContainer.style.display = '';
-      searchInfo.style.visibility = 'hidden'
-      addOrMessage.style.visibility = "hidden";
+      addContactContainer.style.display = 'none';
     }
     else if (index === 1) {
       leftHeaderText.textContent = 'Chats';
       friendList.style.display = 'none';
       chatList.style.display = 'block';
-      addContactContainer.style.display = '';
-      searchInfo.style.visibility = 'hidden'
-      addOrMessage.style.visibility = "hidden";
+      addContactContainer.style.display = 'none';
     }
     else if (index === 2) {
       leftHeaderText.textContent = 'Add Contact';
-      addContactContainer.style.display = '';
-      addContactContainer.style.visibility = 'visible';
-      if (searchInfo.textContent !== 'information') {
-        searchInfo.style.visibility = 'visible';
-        addOrMessage.style.visibility = (searchInfo.textContent === "User not found") ? 'hidden' : 'visible';
-      }
+      addContactContainer.style.display = 'flex';
       logoutBtn.style.display = 'none';
     }
     else {
@@ -137,7 +129,6 @@ navItems.forEach((item, index) => {
       leftSideHeader.style.borderBottom = '';
       leftSideHeader.style.paddingBottom = '0px';
       logoutBtn.style.display = 'none';
-      addContactContainer.style.visibility = 'hidden';
     }
     else {
       friendList.style.display = 'none';
@@ -196,7 +187,8 @@ async function loadFriends() {
           const conversationId = data.conversationId;
           loadMessages(conversationId);
         } catch (err) {
-          showToast("Failed to load conversation", "error");
+          console.log("Failed to load conversation")
+          // showToast("Failed to load conversation", "error");
         }
       });
 
@@ -244,7 +236,8 @@ async function loadChats() {
           const conversationId = data.conversationId;
           loadMessages(conversationId);
         } catch (err) {
-          showToast("Failed to load conversation", "error");
+          console.log(err)
+          // showToast("Failed to load conversation", "error");
         }
 
       });
@@ -356,18 +349,18 @@ logoutBtn.addEventListener('click', () => {
   window.location.replace("/frontend/login.html")
 });
 
-searchContactInput.addEventListener("keydown", (event) => {
+searchContactInput.addEventListener("keydown", async (event) => {
   const username = searchContactInput.value.trim();
   if (event.key === "Enter" && username !== '') {
-    // Call function
+    const res = await fetch (`http://localhost:3000/users/find-user/${username}`);
+    const user = await res.json();
     
-    // Snipped code (will be used)
-    if (username === 'mka198') {
+    if (user.exists) {
       searchInfo.textContent = `Found: ${username}`;
       searchInfo.className = "found";
       addOrMessage.style.visibility = "visible";
-    }
-    else {
+      contactSearched = username;
+    } else {
       searchInfo.textContent = `User not found`;
       searchInfo.className = "not-found";
       addOrMessage.style.visibility = "hidden";
@@ -383,4 +376,52 @@ searchContactInput.addEventListener("input", () => {
     searchInfo.className = "";
     addOrMessage.style.visibility = "hidden";
   }
+});
+
+addContact.addEventListener("click", async () => {
+  const res = await fetch(`http://localhost:3000/add-contact/${currentUser}/${contactSearched}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json"},
+    body: JSON.stringify({contactSearched})
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    showToast(data.message, "success")
+
+    // Update the friend list UI
+    const li = document.createElement("li");
+    li.textContent = contactSearched;
+
+    if (contactSearched === activeMessageName) li.classList.add("active");
+
+    li.addEventListener("click", async() => {
+      activeMessageName = contactSearched;
+      document.querySelectorAll("#friend-lists li").forEach(li => { li.classList.toggle("active", li.textContent === activeMessageName) });
+      document.querySelectorAll("#chat-lists li").forEach(li => { li.classList.toggle("active", li.textContent === activeMessageName) });
+      li.classList.add("active");
+
+      inactive.style.display = "none";
+      active.style.display = "flex";
+      active.style.flexDirection = "column";
+      activeContactName.textContent = contactSearched;
+
+      try {
+        const res = await fetch(`http://localhost:3000/conversations/${currentUser}/${friend}`);
+        const data = await res.json();
+        const conversationId = data.conversationId;
+        loadMessages(conversationId);
+      } catch (err) {
+        console.log("Failed to load conversation (after adding a contact")
+        // showToast("Failed to load conversation", "error");
+      }
+    });
+    friendList.appendChild(li);
+  }
+
+  // disable the Add button after successfully added
+});
+
+messageContact.addEventListener("click", () => {
+
 });
