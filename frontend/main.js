@@ -3,10 +3,10 @@ import { showToast } from "./toast.js";
 const leftSide = document.querySelector('.left-side');
 const friendList = document.getElementById("friend-lists");
 const friendListItems = document.querySelectorAll("#friend-lists li");
-const navItems = document.querySelectorAll("nav ul li")
+const navItems = document.querySelectorAll("nav ul li");
 const divider = document.querySelector('.divider');
-const inactive = document.querySelector('.inactive-view')
-const active = document.querySelector('.active-view')
+const inactive = document.querySelector('.inactive-view');
+const active = document.querySelector('.active-view');
 
 const leftHeaderText = document.getElementById("sidebar-header");
 const chatList = document.getElementById("chat-lists");
@@ -21,8 +21,15 @@ const searchInput = document.getElementById("searchInput");
 const logoutBtn = document.getElementById("logoutBtn");
 
 const messagesContainer = document.querySelector(".active-view .messages");
-const messageInput = document.getElementById("messageInput")
-const sendButton = document.getElementById("sendButton")
+const messageInput = document.getElementById("messageInput");
+const sendButton = document.getElementById("sendButton");
+
+const addContactContainer = document.querySelector('.add-contact-container');
+const searchContactInput = document.getElementById("searchContactInput");
+const searchInfo = document.getElementById("searchInfo");
+const addOrMessage = document.querySelector(".add-or-message");
+const addContact = document.getElementById("addContact");
+const messageContact = document.getElementById("messageContact");
 
 let isDragging = false;
 
@@ -32,7 +39,7 @@ let activeMessageName;
 // JWT Token
 const token = localStorage.getItem("token");
 if (!token) {
-  window.location.replace = "/frontend/login.html"
+  // window.location.replace = "/frontend/login.html"
 } else {
   const payload = JSON.parse(atob(token.split(".")[1]));
   currentUser = payload.username
@@ -97,19 +104,32 @@ navItems.forEach((item, index) => {
       leftHeaderText.textContent = 'Friends';
       friendList.style.display = 'block';
       chatList.style.display = 'none';
+      addContactContainer.style.display = '';
+      searchInfo.style.visibility = 'hidden'
+      addOrMessage.style.visibility = "hidden";
     }
     else if (index === 1) {
       leftHeaderText.textContent = 'Chats';
       friendList.style.display = 'none';
       chatList.style.display = 'block';
+      addContactContainer.style.display = '';
+      searchInfo.style.visibility = 'hidden'
+      addOrMessage.style.visibility = "hidden";
     }
     else if (index === 2) {
       leftHeaderText.textContent = 'Add Contact';
+      addContactContainer.style.display = '';
+      addContactContainer.style.visibility = 'visible';
+      if (searchInfo.textContent !== 'information') {
+        searchInfo.style.visibility = 'visible';
+        addOrMessage.style.visibility = (searchInfo.textContent === "User not found") ? 'hidden' : 'visible';
+      }
       logoutBtn.style.display = 'none';
     }
     else {
       leftHeaderText.textContent = 'Settings';
       logoutBtn.style.display = 'block';
+      addContactContainer.style.display = 'none';
     }
 
     if (index === 0 || index === 1) {
@@ -117,6 +137,7 @@ navItems.forEach((item, index) => {
       leftSideHeader.style.borderBottom = '';
       leftSideHeader.style.paddingBottom = '0px';
       logoutBtn.style.display = 'none';
+      addContactContainer.style.visibility = 'hidden';
     }
     else {
       friendList.style.display = 'none';
@@ -333,4 +354,33 @@ sendButton.addEventListener('click', () => {
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem("token")
   window.location.replace("/frontend/login.html")
+});
+
+searchContactInput.addEventListener("keydown", (event) => {
+  const username = searchContactInput.value.trim();
+  if (event.key === "Enter" && username !== '') {
+    // Call function
+    
+    // Snipped code (will be used)
+    if (username === 'mka198') {
+      searchInfo.textContent = `Found: ${username}`;
+      searchInfo.className = "found";
+      addOrMessage.style.visibility = "visible";
+    }
+    else {
+      searchInfo.textContent = `User not found`;
+      searchInfo.className = "not-found";
+      addOrMessage.style.visibility = "hidden";
+    }
+    searchInfo.style.visibility = "visible";
+  }
+});
+
+searchContactInput.addEventListener("input", () => {
+  if (searchContactInput.value.trim() === '') {
+    searchInfo.textContent = "information";
+    searchInfo.style.visibility = "hidden";
+    searchInfo.className = "";
+    addOrMessage.style.visibility = "hidden";
+  }
 });

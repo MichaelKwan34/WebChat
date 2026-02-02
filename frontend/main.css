@@ -66,6 +66,7 @@ section {
 
 .search-wrapper input::placeholder {
   color: rgb(208, 206, 206);
+  user-select: none;
 }
 
 .search-wrapper ion-icon {
@@ -254,12 +255,6 @@ nav ul li a #person-icon {
   color: #7aaaff;
 }
 
-
-
-
-
-
-
 .message {
   max-width: 70%;
   padding: 8px 12px;
@@ -291,12 +286,6 @@ nav ul li a #person-icon {
   text-align: right;
 }
 
-
-
-
-
-
-
 .messages {
   height: 50vh;
   border-top: 2px solid rgba(255,255,255,0.3);
@@ -325,4 +314,65 @@ nav ul li a #person-icon {
 
 .messages.scrolling::-webkit-scrollbar-thumb:hover {
   background-color: rgba(122, 170, 255, 0.8);
+}
+
+.add-contact-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+}
+
+.add-contact-wrapper {
+  width: 100%;
+}
+
+.search-contact-wrapper {
+  margin-top: 16px;
+}
+
+.search-contact-wrapper input {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 1.05em;
+}
+
+#searchInfo {
+  text-align: center;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  font-size: 17px;
+  visibility: hidden;
+  user-select: none;
+}
+
+#searchInfo.found { 
+  color: #6AD195; 
+}
+
+#searchInfo.not-found { 
+  color: #F06B6F; 
+} 
+
+.add-or-message {
+  display: flex;
+  gap: 10px;
+  padding: 0 5%;
+  margin-bottom: 16px;
+  visibility: hidden;
+}
+
+.add-or-message button {
+  flex: 1;
+  height: 30px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  user-select: none;
 }
