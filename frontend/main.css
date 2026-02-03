@@ -324,7 +324,6 @@ nav ul li a #person-icon {
   justify-content: center;
   align-items: center;
   display: none;
-  /* visibility: hidden; */
 }
 
 .add-contact-wrapper {

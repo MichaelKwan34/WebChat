@@ -245,15 +245,7 @@ app.get("/conversations/:user1/:user2", async (req, res) => {
     let conversation = await Conversation.findOne({ participants: { $all: [user1, user2] }});
 
     if (!conversation) {
-      const userA = await User.findOne({ username: user1 });
-      const userB = await User.findOne({ username: user2 })
       conversation = new Conversation ( { participants: [user1, user2] });
-
-      if (!userA.chats.includes(user2)) userA.chats.push(user2);
-      if (!userB.chats.includes(user1)) userB.chats.push(user1);
-
-      await userA.save();
-      await userB.save();
       await conversation.save();
     }
     res.json({ conversationId: conversation._id });
@@ -281,14 +273,26 @@ app.get("/messages/:conversationId", async (req, res) => {
 // Push a message to the DB
 app.post("/messages/:conversationId", async (req, res) => {
   const { conversationId } = req.params;
-  const { sender, msg } = req.body;
+  const { sender, msg, receiver } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(conversationId)) {
     return res.status(400).json({ message: "Invalid conversationId" });
   }
 
   try {
+    const userA = await User.findOne({ username: sender });
+    const userB = await User.findOne({ username: receiver });
     const message = new Message({ conversationId, sender, text: msg })
+
+    if (!userA.chats.includes(receiver)) {
+      userA.chats.push(receiver);
+      await userA.save();
+    }
+    if (!userB.chats.includes(sender)) {
+      userB.chats.push(sender);
+      await userB.save();
+    }
+
     await message.save();
     res.status(201).json({ message: "Message successfully sent", timeSent: message.createdAt.toISOString()});
   } catch (err) {
@@ -297,19 +301,21 @@ app.post("/messages/:conversationId", async (req, res) => {
 });
 
 // Find a user
-app.get("/users/find-user/:username", async (req, res) => {
-  const { username } = req.params;
+app.get("/users/find-user/:currentUser/:username", async (req, res) => {
+  const { currentUser, username } = req.params;
+  const currUser = await User.findOne({ username: currentUser });
   const exists = await User.exists({ username });
-  res.json({ exists: exists });
+  res.json({ exists: exists, user: currUser, searchedUser: username});
 });
 
+// Add a contact
 app.post("/add-contact/:currentUser/:contactSearched", async (req, res) => {
   const { currentUser} = req.params; 
   const { contactSearched } = req.body;
   try {
     const user = await User.findOne({ username: currentUser });
     if (!user) {
-      return res.status(404).json({ match: false, message: "User not found"});
+      return res.status(404).json({ success: false, message: "User not found"});
     } 
 
     user.friends.push(contactSearched);
