@@ -39,20 +39,35 @@ let currentUser;
 let activeMessageName;
 let contactSearched;
 
+let socket = io("http://localhost:3000");
+
 // JWT Token
 const token = localStorage.getItem("token");
 if (!token) {
-  // window.location.replace = "/frontend/login.html"
+  window.location.replace = "/frontend/login.html"
 } else {
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  currentUser = payload.username
+  try {
+    const payloadBase64 = token.split(".")[1];
+    if (!payloadBase64) throw new Error("Invalid token");
 
-  // Display "successfully logged in" message 
-  document.addEventListener("DOMContentLoaded", () => {
-    showToast("Logged in successfully!", "success");
-    loadFriends();
-    loadChats();
-  });
+    const payload = JSON.parse(atob(payloadBase64));
+    if (!payload?.username) throw new Error("Invalid payload");
+
+    currentUser = payload.username;
+
+    // Display "successfully logged in" message 
+    document.addEventListener("DOMContentLoaded", () => {
+      showToast("Logged in successfully!", "success");
+      socket.emit("authenticate", token);
+      loadFriends();
+      loadChats();
+    });
+
+  } catch (err) {
+    localStorage.removeItem("token");
+    window.location.replace("/frontend/login.html");
+    console.log(err.message);
+  }
 }
 
 function filterLists() {
@@ -190,8 +205,7 @@ async function loadFriends() {
           const conversationId = data.conversationId;
           loadMessages(conversationId);
         } catch (err) {
-          console.log("Failed to load conversation")
-          // showToast("Failed to load conversation", "error");
+          console.log(err.message);
         }
       });
 
@@ -240,7 +254,6 @@ async function loadChats() {
           loadMessages(conversationId);
         } catch (err) {
           console.log(err)
-          // showToast("Failed to load conversation", "error");
         }
 
       });
@@ -249,7 +262,7 @@ async function loadChats() {
     });
 
   } catch (err) {
-      showToast("Failed to load chats", "error");
+      console.log(err.message)
   }
 }
 
@@ -334,8 +347,10 @@ async function sendMessage(msg) {
     messagesContainer.appendChild(messageDiv);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
     loadChats();
+
+    socket.emit("private_message", {from: currentUser, to: activeMessageName, text: msg, time: data.timeSent})
   } catch (err) {
-    showToast(err.message, "error");
+    console.log(err.message)
   }
 }
 
@@ -351,6 +366,7 @@ sendButton.addEventListener('click', () => {
 
 logoutBtn.addEventListener('click', () => {
   localStorage.removeItem("token")
+  socket.disconnect();
   window.location.replace("/frontend/login.html")
 });
 
@@ -429,7 +445,35 @@ messageContact.addEventListener("click", async () => {
     const conversationId = data.conversationId;
     loadMessages(conversationId);
   } catch (err) {
-    console.log("Failed to load conversation (Message contact")
-    // showToast("Failed to load conversation", "error");
+    console.log(err.message)
+  }
+});
+
+socket.on("private_message", ({from, to, text, time }) => {
+  if (from === activeMessageName && to === currentUser) {
+    const messageClass = "received";
+
+    // Create message div
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${messageClass}`;
+
+    // Message content
+    const content = document.createElement("p");
+    content.className = "message-content";
+    content.textContent = text;
+
+    // Message time
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "message-time";
+    timeSpan.textContent = new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    messageDiv.appendChild(content);
+    messageDiv.appendChild(timeSpan);
+
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+  else {
+    loadChats()
   }
 });

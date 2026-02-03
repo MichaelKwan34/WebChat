@@ -10,6 +10,10 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 import jwt from "jsonwebtoken"
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import http from "http";
+import { Server } from "socket.io"
+
+const onlineUsers = new Map();
 
 dotenv.config();
 
@@ -17,8 +21,44 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const httpServer = http.createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
 // Connect to MongoDB
 await connectDB();
+
+io.on("connection", (socket) => {
+
+  socket.on("authenticate", (token) => {
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
+      socket.username = payload.username;
+      onlineUsers.set(socket.username, socket.id);
+    } catch (err) {
+      socket.disconnect();
+    }
+  });
+
+  socket.on("disconnect", () => {
+    if (socket.username) {
+      onlineUsers.delete(socket.username);
+    }
+  });
+
+  socket.on("private_message", ({ from, to, text, time }) => {
+    const receiverSocketId = onlineUsers.get(to);
+
+    if (receiverSocketId) {
+      socket.to(receiverSocketId).emit("private_message", { from, to, text, time })
+    }
+  });
+
+});
 
 // Add an account to DB
 app.post("/register", async (req, res) => {
@@ -70,9 +110,7 @@ app.post("/login", async (req, res) => {
     }
 
     const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, {expiresIn: '1h'})
-
     res.json({ token })
-
   }
   catch (err) {
     res.status(500).json({ match: false, message: "Server error (Login)" });
@@ -326,4 +364,4 @@ app.post("/add-contact/:currentUser/:contactSearched", async (req, res) => {
   }
 });
 
-app.listen(3000, () => { console.log("Server running on port 3000..."); });
+httpServer.listen(3000, () => { console.log("Server running on port 3000..."); });

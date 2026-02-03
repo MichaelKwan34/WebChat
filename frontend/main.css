@@ -387,8 +387,9 @@ nav ul li a #person-icon {
 }
 
 #logoutBtn{
-  width: 140px;
+  width: 100%;
   height: 40px;
+  margin: 0 5%;
   font-size: 16px;
   border: none;
   cursor: pointer;
