@@ -31,6 +31,8 @@ const addOrMessage = document.querySelector(".add-or-message");
 const addContact = document.getElementById("addContact");
 const messageContact = document.getElementById("messageContact");
 
+const logoutContainer = document.querySelector(".logout-container");
+
 let isDragging = false;
 
 let currentUser;
@@ -116,19 +118,20 @@ navItems.forEach((item, index) => {
     else if (index === 2) {
       leftHeaderText.textContent = 'Add Contact';
       addContactContainer.style.display = 'flex';
-      logoutBtn.style.display = 'none';
+      logoutContainer.style.display = "none";
     }
     else {
       leftHeaderText.textContent = 'Settings';
       logoutBtn.style.display = 'block';
       addContactContainer.style.display = 'none';
+      logoutContainer.style.display = "flex";
     }
 
     if (index === 0 || index === 1) {
       searchWrapper.style.display = '';
       leftSideHeader.style.borderBottom = '';
       leftSideHeader.style.paddingBottom = '0px';
-      logoutBtn.style.display = 'none';
+      logoutContainer.style.display = "none";
     }
     else {
       friendList.style.display = 'none';
@@ -426,8 +429,7 @@ messageContact.addEventListener("click", async () => {
     const conversationId = data.conversationId;
     loadMessages(conversationId);
   } catch (err) {
-    console.log("Failed to load conversation")
+    console.log("Failed to load conversation (Message contact")
     // showToast("Failed to load conversation", "error");
   }
-
 });
