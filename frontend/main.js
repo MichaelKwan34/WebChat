@@ -1,40 +1,30 @@
 import { showToast } from "./toast.js";
 
 const leftSide = document.querySelector('.left-side');
+const leftSideHeader = document.querySelector(".left-side-header");
+const leftHeaderText = document.getElementById("sidebar-header");
+const searchWrapper = document.querySelector('.search-wrapper');
+const searchInput = document.getElementById("searchInput");
 const friendList = document.getElementById("friend-lists");
-const friendListItems = document.querySelectorAll("#friend-lists li");
+const chatList = document.getElementById("chat-lists");
+const activeContactName = document.getElementById("contact-name-active");
 const navItems = document.querySelectorAll("nav ul li");
-const divider = document.querySelector('.divider');
 const inactive = document.querySelector('.inactive-view');
 const active = document.querySelector('.active-view');
-
-const leftHeaderText = document.getElementById("sidebar-header");
-const chatList = document.getElementById("chat-lists");
-const chatListItems = document.querySelectorAll("#chat-lists li");
-const searchWrapper = document.querySelector('.search-wrapper');
-
-const leftSideHeader = document.querySelector(".left-side-header");
-
-const activeContactName = document.getElementById("contact-name-active");
-
-const searchInput = document.getElementById("searchInput");
-const logoutBtn = document.getElementById("logoutBtn");
-
+const divider = document.querySelector('.divider');
 const messagesContainer = document.querySelector(".active-view .messages");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
-
 const addContactContainer = document.querySelector('.add-contact-container');
 const searchContactInput = document.getElementById("searchContactInput");
 const searchInfo = document.getElementById("searchInfo");
 const addOrMessage = document.querySelector(".add-or-message");
 const addContact = document.getElementById("addContact");
 const messageContact = document.getElementById("messageContact");
-
 const logoutContainer = document.querySelector(".logout-container");
+const logoutBtn = document.getElementById("logoutBtn");
 
 let isDragging = false;
-
 let currentUser;
 let activeMessageName;
 let contactSearched;

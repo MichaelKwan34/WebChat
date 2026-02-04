@@ -52,7 +52,6 @@ io.on("connection", (socket) => {
 
   socket.on("private_message", ({ from, to, text, time }) => {
     const receiverSocketId = onlineUsers.get(to);
-
     if (receiverSocketId) {
       socket.to(receiverSocketId).emit("private_message", { from, to, text, time })
     }
@@ -191,7 +190,8 @@ app.post("/verify-otp", async (req, res) => {
 
     const inputHash = crypto.createHmac("sha256", process.env.OTP_SECRET).update(otp.toString()).digest("hex");
 
-    user.resetCodeAttempts = (user.resetCodeAttempts || 0) + 1; // if the user.resetCodeAttempts is falsy ("undefined", "null", etc) set fall back to 0
+    // if the user.resetCodeAttempts is falsy ("undefined", "null", etc) set fall back to 0
+    user.resetCodeAttempts = (user.resetCodeAttempts || 0) + 1;
 
     // Verify OTP
     if (inputHash !== user.resetCode) {

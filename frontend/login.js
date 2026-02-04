@@ -26,15 +26,11 @@ const emailRegister = document.getElementById('emailRegister')
 const passwordRegister = document.getElementById('passwordRegister');
 
 const emailReset = document.getElementById('emailReset');
-
 const otpBoxes = document.querySelectorAll('.otp-box');
-
 const passwordReset = document.getElementById('passwordReset');
 
 // Buttons
-const registerBtn = document.getElementById('registerBtn');
 const continueBtn = document.getElementById('continueBtn');
-const loginBtn = document.getElementById('loginBtn');
 const submitOTPBtn = document.getElementById('submitOTPBtn');
 const resetBtn = document.getElementById('resetBtn')
 
@@ -250,7 +246,6 @@ registerForm.addEventListener("submit", async (e) => {
       headers: {"Content-Type":"application/json"}, 
       body: JSON.stringify({username, email, password})
     });
-    const data = await res.json();
 
     if (res.ok) {
       usernameLogin.value = username;

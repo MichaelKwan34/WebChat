@@ -187,7 +187,6 @@ a {
   justify-content: center;
   align-items: center;
   user-select: none;
-
   opacity: 0;        
   transform: translateX(50px);
   pointer-events: none;
