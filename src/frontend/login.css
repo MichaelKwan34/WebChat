@@ -1,0 +1,252 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+body, section {
+  overflow: hidden;
+}
+
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background:
+    radial-gradient(1200px circle at 20% 10%, rgba(90, 130, 255, 0.18), transparent 40%),
+    radial-gradient(900px circle at 80% 90%, rgba(60, 200, 255, 0.12), transparent 45%),
+    linear-gradient(135deg, #141e30, #1b2a41, #243b55);
+}
+
+.login-form {
+  position: relative;
+  display: flex;
+  width: 400px;
+  height: 450px;
+  background:transparent;
+  border: 2px solid white;
+  border-radius:20px;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+}
+
+.inputbox {
+  position: relative;
+  margin: 30px 0;
+  width: 310px;
+  border-bottom: 2px solid white;
+}
+
+.inputbox label {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  color: white;
+  pointer-events: none;
+  transition: 0.5s;
+  font-weight: bold;
+  z-index: 1;
+}
+
+input:focus ~ label {
+  top: -5px;
+}
+
+input:valid ~ label {
+  top: -5px;
+}
+
+.inputbox input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0 35px 0 5px;
+  color: white;
+  font-size: 1em;
+}
+
+.inputbox ion-icon {
+  position: absolute;
+  right: 8px;
+  color: white;
+  top: 20px;
+}
+
+.forgot {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0 15px;
+  color: white;
+}
+
+.forgot label:nth-child(2) {
+  order: 1;
+}
+
+.forgot label {
+  display: flex;
+  align-items: center;
+}
+
+.forgot label input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+.forgot label a {
+  color: white;
+  text-decoration: none;
+}
+
+.forgot label a:hover {
+  text-decoration: underline;
+}
+
+button {
+  width: 100%;
+  height: 40px;
+  border-radius: 40px;
+  background: white;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.register {
+  color: white;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.register p a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+.register p a:hover {
+  text-decoration: underline;
+}
+
+a {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.registration-header, .forgot-header, .otp-header, .reset-header {
+  display: relative;
+  align-items: center;
+}
+
+.registration-header h1, .forgot-header h1, .otp-header h1, .reset-header h1 {
+  margin: 0;
+  color: white;
+  margin-bottom: 30px;
+}
+
+#registerBackIcon, #resetBackIcon, #otpBackIcon, #newPassBackIcon {
+  position: absolute;   
+  left: 8%;                     
+  font-size: 2.5em;    
+  cursor: pointer;
+  color: white;
+}
+
+#resetBackIcon {
+  left: 6%;                     
+}
+
+#otpBackIcon {
+  left: 5.5%;                     
+}
+
+#registerBtn, #continueBtn {
+  margin-top: 7px;
+}
+
+.register-form, .forgot-form, .otp-form, .reset-form {
+  position: absolute;
+  width: 550px;
+  height: 450px;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  opacity: 0;        
+  transform: translateX(50px);
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.5s ease;
+}
+
+.forgot-form, .reset-form {
+  width: 500px;
+  height: 300px;
+}
+
+.login-form.show, .register-form.show, .forgot-form.show, .otp-form.show, .reset-form.show {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.login-form.hide, .register-form.hide, .forgot-form.hide, .otp-form.hide, .reset-form.hide {
+  opacity: 0;
+  transform: translateX(50px);
+  pointer-events: none;
+}
+
+.otp-form {
+  width: 620px;
+  height: 300px;
+}
+
+.otpInputs {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.otp-box {
+  width: 55px;
+  height: 80px;
+  text-align: center;
+  font-size: 1.8em;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
+  outline: none;
+  font-weight: normal;
+  color: #fff;
+}
+
+.otp-box.filled {
+  font-weight: bold;
+}
+
+.otp-box:focus {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#submitOTPBtn, #continueBtn, #resetBtn {
+    margin-top: 12px;
+}
