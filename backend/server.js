@@ -269,9 +269,9 @@ app.get("/users/:username/chats", async(req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ friends: user.chats });
+    res.json({ chats: user.chats });
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch friends" });
+    res.status(500).json({ message: "Failed to fetch chats" });
   }
 });
 
@@ -361,6 +361,34 @@ app.post("/add-contact/:currentUser/:contactSearched", async (req, res) => {
     res.json({ message: "Successfully added a contact", success: true })
   } catch (err) {
     res.status(500).json({ message: "Failed to add a contact" });
+  }
+});
+
+// Update the order of chats for a user
+app.put("/users/:username/update-chats", async (req, res) => {
+  const { username } = req.params;
+  const { chat } = req.body;
+
+  if (!chat) {
+    return res.status(400).json({ message: "chat is required in body" });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const filteredChats = user.chats.filter(c => c !== chat);
+
+    user.chats = [chat, ...filteredChats];
+
+    await user.save();
+
+    res.json({ message: "Chats updated successfully", chats: user.chats });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update chats" });
   }
 });
 

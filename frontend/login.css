@@ -8,6 +8,7 @@
 body, section {
   overflow: hidden;
 }
+
 section {
   display: flex;
   justify-content: center;

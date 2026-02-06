@@ -213,14 +213,14 @@ async function loadChats() {
     const res = await fetch(`http://localhost:3000/users/${currentUser}/chats`)
 
     if (!res.ok) {
-      throw new Error("Failed to fetch friends");
+      throw new Error("Failed to fetch chats");
     }
 
     const data = await res.json();
     
     chatList.innerHTML = "";
 
-    data.friends.forEach(chat => {
+    data.chats.forEach(chat => {
       const li = document.createElement("li");
       li.textContent = chat;
 
