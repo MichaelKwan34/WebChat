@@ -8,7 +8,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
   const [loading, setLoading] = useState(false);
 
   async function isUsernameAvailable(username) {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/check-username?username=${username}`);
+    const res = await fetch(`/api/users/check-username?username=${username}`);
     const data = await res.json();
     return data.available;
   }
@@ -19,7 +19,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
   }
 
   async function isEmailAvailable(email) {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/check-email?email=${email}`);
+    const res = await fetch(`/api/users/check-email?email=${email}`);
     const data = await res.json();
     return data.available;
   }
@@ -83,7 +83,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
+      const res = await fetch(`/api/auth/register`, {
         method: "POST",
         headers: {"Content-Type":"application/json"}, 
         body: JSON.stringify({username, email, password: passwordRegister})
