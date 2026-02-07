@@ -2,6 +2,8 @@ import { useState } from "react";
 import { showToast } from "../../utils/toast.js"
 
 export default function ForgotForm({ setView, emailReset, setEmailReset }) {
+  const [loading, setLoading] = useState(false);
+
   function validateEmailFormat(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email.trim());
@@ -9,25 +11,42 @@ export default function ForgotForm({ setView, emailReset, setEmailReset }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return
+    setLoading(true)
 
-    if (!(validateEmailFormat(emailReset))) {
-      showToast("Please check your email address format", "error")
+    const email = emailReset.trim().toLowerCase();
+
+    if (!email) {
+      showToast("Please enter your email", "error");
+      setLoading(false);
       return;
     }
 
-    const res = await fetch("http://localhost:3000/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: emailReset })
-    });
+    if (!(validateEmailFormat(email))) {
+      showToast("Please check your email address format", "error");
+      setLoading(false);
+      return;
+    }
 
-    const data = await res.json();
+    try {
+      const res = await fetch("http://localhost:3000/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
 
-    if (res.ok) {
-      showToast(data.message, "success")
-      setView("otp");
-    } else {
-      showToast("Something went wrong. Please try again.", "error")
+      const data = await res.json();
+
+      if (res.ok) {
+        showToast(data.message, "success")
+        setView("otp");
+      } else {
+        showToast("Something went wrong. Please try again.", "error")
+      }
+    } catch (err) {
+      showToast("Server error. Please try again later.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,7 +63,7 @@ export default function ForgotForm({ setView, emailReset, setEmailReset }) {
         <label>Email</label>
       </div>
 
-      <button type="submit">Continue</button>
+      <button type="submit" disabled={loading}>Continue</button>
     </form>
   );
 }

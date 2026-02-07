@@ -5,6 +5,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
   const [usernameRegister, setUsernameRegister] = useState("");
   const [emailRegister, setEmailRegister] = useState("");
   const [passwordRegister, setPasswordRegister] = useState("");
+  const [loading, setLoading] = useState(false);
 
   async function isUsernameAvailable(username) {
     const res = await fetch(`http://localhost:3000/users/check-username?username=${username}`);
@@ -28,25 +29,56 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
     return regex.test(password);
   }
 
+  function isValidUsernameLength(username) {
+    return username.length >= 3 && username.length <= 20;
+  }
+
+  function isValidUsernameChars(username) {
+    const regex = /^[a-zA-Z0-9_]+$/;
+    return regex.test(username);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!(await isUsernameAvailable(usernameRegister))) {
-      showToast("Oops! That username is already taken", "error");
+    if (loading) return;
+    setLoading(true);
+
+    const username = usernameRegister.trim().toLowerCase();
+    const email = emailRegister.trim().toLowerCase();
+
+    if (!isValidUsernameLength(username)) {
+      showToast("Username must be 3–20 characters", "error");
+      setLoading(false);
       return;
     }
 
-    if (!validateEmailFormat(emailRegister)) {
+    if (!isValidUsernameChars(username)) {
+      showToast("Username can contain only letters, numbers, and _", "error");
+      setLoading(false);
+      return;
+    }
+
+    if (!validateEmailFormat(email)) {
       showToast("Please check your email address format", "error")
+      setLoading(false);
       return
-    }
-
-    if (!(await isEmailAvailable(emailRegister))) {
-      showToast("That email address is already registered", "error");
-      return;
     }
 
     if (!validatePassword(passwordRegister)) {
       showToast("Password must include letters, numbers, and a capital letter", "error")
+      setLoading(false);
+      return;
+    }
+
+    if (!(await isUsernameAvailable(username))) {
+      showToast("Oops! That username is already taken", "error");
+      setLoading(false);
+      return;
+    }
+
+    if (!(await isEmailAvailable(email))) {
+      showToast("That email address is already registered", "error");
+      setLoading(false);
       return;
     }
 
@@ -54,7 +86,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
       const res = await fetch("http://localhost:3000/register", {
         method: "POST",
         headers: {"Content-Type":"application/json"}, 
-        body: JSON.stringify({username: usernameRegister, email: emailRegister, password: passwordRegister})
+        body: JSON.stringify({username, email, password: passwordRegister})
       });
 
       if (res.ok) {
@@ -72,6 +104,9 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
     } 
     catch (err) {
       showToast("Server errror. Try again later.", "error")
+    } 
+    finally {
+      setLoading(false)
     }
   };
 
@@ -100,7 +135,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
         <label>Password</label>
       </div>
 
-      <button type="submit">Register</button>
+      <button type="submit" disabled={loading}>Register</button>
     </form>
   );
 }

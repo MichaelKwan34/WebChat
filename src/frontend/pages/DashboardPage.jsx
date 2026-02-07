@@ -22,13 +22,16 @@ export default function DashboardPage() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const localToken = localStorage.getItem("token");
+    const sessionToken = sessionStorage.getItem("token");
 
-    if (!token) {
+    if (!localToken && !sessionToken) {
       navigate("/", { replace: true });
       return;
     }
 
+    const token = (localToken ? localToken : sessionToken)
+        
     try {
       const payloadBase64 = token.split(".")[1];
       if (!payloadBase64) throw new Error("Invalid token");
@@ -47,6 +50,7 @@ export default function DashboardPage() {
       });
     } catch (err) {
       localStorage.removeItem("token");
+      sessionStorage.removeItem("token");
       navigate("/", { replace: true });
       showToast(err.message, "error");
     }

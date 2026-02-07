@@ -2,6 +2,7 @@ import { useState } from "react";
 import { showToast } from "../../utils/toast.js";
 
 export default function ResetForm({ setView, emailReset, setEmailReset }) {
+  const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("")
 
   function validatePassword(password) {
@@ -24,9 +25,13 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return
+    setLoading(true)
+
+    const email = emailReset.trim().toLowerCase();
 
     if (validatePassword(newPassword)) {
-      const res = await changePassword(emailReset, newPassword);
+      const res = await changePassword(email, newPassword);
       setEmailReset("");
       setNewPassword("");
       showToast(res.message, "success")
@@ -34,6 +39,7 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
     } else {
       showToast("Password must include letters, numbers, and a capital letter", "error");
     }
+    setLoading(false)
   };
   
   return (
@@ -49,7 +55,7 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
         <label>Password</label>
       </div>
 
-      <button type="submit">Reset</button>
+      <button type="submit" disabled={loading}>Reset</button>
     </form>
   );
 }

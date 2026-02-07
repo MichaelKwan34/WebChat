@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { showToast } from "../../utils/toast.js";
 
 export default function OTPForm({ setView, emailReset}) {
+  const [loading, setLoading] = useState(false);
+
   const otp1 = useRef(null);
   const otp2 = useRef(null);
   const otp3 = useRef(null);
@@ -43,11 +45,18 @@ export default function OTPForm({ setView, emailReset}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    setLoading(true);
 
     const otpRefs = [otp1, otp2, otp3, otp4, otp5, otp6];
     const otp = otpRefs.map(ref => ref.current.value).join("");
 
     try {
+      if (otp.length !== 6) {
+        showToast("Please enter the 6-digit code", "error");
+        return;
+      }
+
       const res = await verifyOTP(emailReset, otp);
 
       if (res.isMatch === true) {
@@ -93,7 +102,7 @@ export default function OTPForm({ setView, emailReset}) {
           onKeyDown={(e) => handleKeyDown(e, otp5)} required/>
 
       </div>
-      <button type="submit">Continue</button>
+      <button type="submit" disabled={loading}>Continue</button>
     </form>
   );
 }

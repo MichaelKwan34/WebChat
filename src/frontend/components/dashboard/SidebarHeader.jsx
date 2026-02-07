@@ -7,7 +7,7 @@ export default function SidebarHeader({ activeTab, currentSearch, setFriendsSear
   };
 
   const handleChange = (e) => {
-    const value = e.target.value;
+    const value = e.target.value.toLowerCase();
     if (activeTab === "friends") setFriendsSearch(value);
     if (activeTab === "chats") setChatsSearch(value);
   };

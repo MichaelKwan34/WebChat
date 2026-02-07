@@ -14,7 +14,8 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
   const handleLogout = () => {
     socket.disconnect();
-    localStorage.removeItem("token")
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     navigate("/", { replace: true })
   };
 
@@ -167,7 +168,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
             <ion-icon name="search-outline" id="search-icon"></ion-icon>
             <input type="text" autoComplete="off" placeholder="Enter username" value={searchedUsername} 
                   onChange={(e) => { 
-                    const val = e.target.value;
+                    const val = e.target.value.toLowerCase();
                     setSearchedUsername(val); 
                     if(val === "") {
                        setInfoVisible(false);

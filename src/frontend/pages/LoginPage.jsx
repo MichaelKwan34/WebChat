@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/login/LoginForm";
 import RegisterForm from "../components/login/RegisterForm";
 import ForgotForm from "../components/login/ForgotForm";
@@ -7,14 +8,20 @@ import ResetForm from "../components/login/ResetForm";
 import "../login.css";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  
   const [view, setView] = useState("login");
-
-  // Props for Login Form
   const [usernameLogin, setUsernameLogin] = useState("");
   const [passwordLogin, setPasswordLogin] = useState("");
-
-  // Prop for Reset Passworf Form
   const [emailReset, setEmailReset] = useState("");
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    const sessionToken = sessionStorage.getItem("token");
+    if (localToken || sessionToken) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [navigate]);
   
   return (
     <section>
