@@ -45,7 +45,20 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     handleFriendClick(chat)
   }
 
+  function isValidCharacters(str) {
+    const regex = /^[a-zA-Z0-9_]{3,20}$/;
+    return regex.test(str);
+  }
+  
   const handleSearch = async (username) => {
+    if (!isValidCharacters(username)) {
+      setSearchInfo("User not found")
+      setAddVisible(false);
+      setMsgVisible(false);
+      setStatus("not-found");
+      return;
+    }
+
     const res = await fetch (`http://localhost:3000/users/find-user/${currentUser}/${username}`);
     const data = await res.json();
 
