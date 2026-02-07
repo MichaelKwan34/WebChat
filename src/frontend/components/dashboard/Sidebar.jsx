@@ -3,7 +3,7 @@ import SidebarHeader from "./SidebarHeader";
 import SidebarContent from "./SidebarContent";
 import SidebarNav from "./SidebarNav";
 
-export default function Sidebar({ currentUser, activeTab, setActiveTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, setConversationId, setMessages }) {
+export default function Sidebar({ socket, currentUser, activeTab, setActiveTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, setConversationId, messages, setMessages }) {
   const [friendsSearch, setFriendsSearch] = useState("");
   const [chatsSearch, setChatsSearch] = useState("");
   const currentSearch = activeTab === "friends" ? friendsSearch : chatsSearch;
@@ -18,7 +18,8 @@ export default function Sidebar({ currentUser, activeTab, setActiveTab, activeFr
           setChatsSearch={setChatsSearch}
           />
 
-        <SidebarContent 
+        <SidebarContent
+          socket={socket} 
           currentUser={currentUser} 
           activeTab={activeTab}
           activeFriend={activeFriend}
@@ -31,6 +32,7 @@ export default function Sidebar({ currentUser, activeTab, setActiveTab, activeFr
           setChats={setChats}
           currentSearch={currentSearch}
           setConversationId={setConversationId}
+          messages={messages}
           setMessages={setMessages}
           />
       </div>

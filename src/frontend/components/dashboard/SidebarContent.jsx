@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { showToast } from "../../utils/toast.js"
 
-export default function SidebarContent({ currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages }) {
+export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages }) {
   const navigate = useNavigate();
 
   const [searchedUsername, setSearchedUsername] = useState("");
@@ -13,9 +13,9 @@ export default function SidebarContent({ currentUser, activeTab, activeFriend, s
   const [msgVisible, setMsgVisible] = useState("");
 
   const handleLogout = () => {
+    socket.disconnect();
     localStorage.removeItem("token")
     navigate("/", { replace: true })
-    // TODO: socket.disconnect();
   };
 
   const filterList = (list) => {

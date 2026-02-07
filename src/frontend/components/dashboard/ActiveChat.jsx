@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-export default function ActiveChat({ currentUser, activeChat, conversationId, messages, setMessages, setChats }) {
+export default function ActiveChat({ socket, currentUser, activeChat, conversationId, messages, setMessages, setChats }) {
   const [text, setText] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -9,49 +9,72 @@ export default function ActiveChat({ currentUser, activeChat, conversationId, me
 
     try {
       const res = await fetch(`http://localhost:3000/messages/${conversationId}`, {
-        method: "POST",
-        headers: { 
-          "Content-Type" : "application/json",
-        },
-        body: JSON.stringify({
+          method: "POST",
+          headers: { 
+            "Content-Type" : "application/json",
+          },
+          body: JSON.stringify({
+            sender: currentUser,
+            msg: trimmedText,
+            receiver: activeChat
+          })
+        });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      setText("");
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
           sender: currentUser,
-          msg: trimmedText,
-          receiver: activeChat
-        })
+          text: trimmedText,
+          createdAt: new Date().toISOString()
+        }
+      ]);
+
+      setChats(prevChats => {
+        const filtered = prevChats.filter(chat => chat !== activeChat);
+        return [activeChat, ...filtered]
       });
 
-    const data = await res.json();
+      await fetch(`http://localhost:3000/users/${currentUser}/update-chats`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat: activeChat })
+      });
 
-    if (!res.ok) {
-      throw new Error(data.message);
+      socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent})
+      } 
+      catch (err) {
+        console.log(err.message)
     }
+  };
 
-    setText("");
-    setMessages(prevMessages => [
-      ...prevMessages,
-      {
-        sender: currentUser,
-        text: trimmedText,
-        createdAt: new Date().toISOString()
+  useEffect(() => {
+    if (!socket) return;
+
+    const handlePrivateMessage = ({ from, to, text, time }) => {
+      if (from === activeChat && to === currentUser) {
+        setMessages(prev => [...prev, { sender: from, text, createdAt: time }]);
       }
-    ]);
+      
+      setChats(prevChats => {
+        if (!prevChats.includes(from)) return [from, ...prevChats];
+        const filtered = prevChats.filter(chat => chat !== from);
+        return [from, ...filtered];
+      });
+    };
 
-    setChats(prevChats => {
-      const filtered = prevChats.filter(chat => chat !== activeChat);
-      return [activeChat, ...filtered]
-    });
+    socket.on("private_message", handlePrivateMessage);
 
-    await fetch(`http://localhost:3000/users/${currentUser}/update-chats`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat: activeChat })
-    });
-
-    // TODO: socket.emit("private_message", {from: currentUser, to: activeMessageName, text: msg, time: data.timeSent})
-
-    } catch (err) {
-      console.log(err.message)
-  }};
+    return () => {
+      socket.off("private_message", handlePrivateMessage);
+    };
+  }, [socket, activeChat, currentUser, setMessages, setChats]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
