@@ -22,7 +22,7 @@ router.get("/:conversationId", async (req, res) => {
 });
 
 // Push a message to the DB
-router.post("/messages/:conversationId", async (req, res) => {
+router.post("/:conversationId", async (req, res) => {
   const { conversationId } = req.params;
   const { sender, msg, receiver } = req.body;
 

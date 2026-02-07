@@ -26,11 +26,11 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
   const handleFriendClick = async (friend) => {
     try {
-      const resConversationId = await fetch(`http://localhost:3000/conversations/${currentUser}/${friend}`);
+      const resConversationId = await fetch(`http://localhost:3000/api/conversations/${currentUser}/${friend}`);
       const dataConversationId = await resConversationId.json();
       setConversationId(dataConversationId.conversationId);
 
-      const resMsg = await fetch(`http://localhost:3000/messages/${dataConversationId.conversationId}`)
+      const resMsg = await fetch(`http://localhost:3000/api/messages/${dataConversationId.conversationId}`)
       const dataMsg = await resMsg.json();
       setMessages(dataMsg)
       
@@ -59,7 +59,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       return;
     }
 
-    const res = await fetch (`http://localhost:3000/users/find-user/${currentUser}/${username}`);
+    const res = await fetch (`http://localhost:3000/api/users/find-user/${currentUser}/${username}`);
     const data = await res.json();
 
     setInfoVisible(true);
@@ -92,7 +92,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
   };
 
   const handleAddContact = async () => {
-    const res = await fetch(`http://localhost:3000/add-contact/${currentUser}`, {
+    const res = await fetch(`http://localhost:3000/api/users/add-contact/${currentUser}`, {
       method: "POST",
       headers: { "Content-Type": "application/json"},
       body: JSON.stringify({searchedUsername: searchedUsername})
@@ -110,7 +110,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
   async function fetchFriends() {
     try {
-      const res = await fetch(`http://localhost:3000/users/${currentUser}/friends`);
+      const res = await fetch(`http://localhost:3000/api/users/${currentUser}/friends`);
       if (!res.ok) throw new Error("Failed to fetch friends");
       const data = await res.json();
       setFriends(data.friends);
@@ -121,7 +121,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
   async function fetchChats() {
     try {
-      const res = await fetch(`http://localhost:3000/users/${currentUser}/chats`);
+      const res = await fetch(`http://localhost:3000/api/users/${currentUser}/chats`);
       if (!res.ok) throw new Error("Failed to fetch chats");
       const data = await res.json();
       setChats(data.chats);

@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import connectDB from "./db.js";
 import dotenv from "dotenv";
@@ -10,18 +11,24 @@ import userRoutes from "./routes/users.js";
 import conversationRoutes from "./routes/conversations.js";
 import messageRoutes from "./routes/messages.js";
 
-
 dotenv.config();
 await connectDB();
 
+const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use("/", authRoutes);
-app.use("/users", userRoutes);
-app.use("/conversations", conversationRoutes);
-app.use("/messages", messageRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/messages", messageRoutes);
+
+// ---------- Serve frontend ----------
+app.use(express.static(path.join(process.cwd(), "dist")));
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "dist/index.html"));
+});
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { cors: { origin: "*", methods: ["GET", "POST"] }});
@@ -53,4 +60,4 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(3000, () => { console.log("Server running on port 3000..."); });
+httpServer.listen(PORT, () => { console.log(`Server running on port ${PORT}...`); });

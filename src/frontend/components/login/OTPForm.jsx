@@ -31,7 +31,7 @@ export default function OTPForm({ setView, emailReset}) {
   };
 
   async function verifyOTP(email, otp) {
-    const res = await fetch("http://localhost:3000/verify-otp", {
+    const res = await fetch("http://localhost:3000/api/auth/verify-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email:email, otp:otp })

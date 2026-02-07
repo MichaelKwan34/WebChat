@@ -4,14 +4,14 @@ import User from "../models/User.js";
 const router = express.Router();
 
 // Check if username is taken or not
-router.get("/users/check-username", async (req, res) => {
+router.get("/check-username", async (req, res) => {
   const { username } = req.query;
   const exists = await User.exists({ username });
   res.json({ available: !exists });
 });
 
 // Check if email is taken or not
-router.get("/users/check-email", async (req, res) => {
+router.get("/check-email", async (req, res) => {
   const { email } = req.query;
   const exists = await User.exists({ email });
   res.json({ available: !exists });
