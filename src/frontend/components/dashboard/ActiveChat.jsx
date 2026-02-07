@@ -8,7 +8,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
     const trimmedText = text.trim();
 
     try {
-      const res = await fetch(`http://localhost:3000/api/messages/${conversationId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/messages/${conversationId}`, {
           method: "POST",
           headers: { 
             "Content-Type" : "application/json",
@@ -41,7 +41,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
         return [activeChat, ...filtered]
       });
 
-      await fetch(`http://localhost:3000/api/users/${currentUser}/update-chats`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/users/${currentUser}/update-chats`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chat: activeChat })

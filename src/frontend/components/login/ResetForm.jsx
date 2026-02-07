@@ -11,7 +11,7 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
   }
 
   async function changePassword(email, password) {
-    const res = await fetch("http://localhost:3000/api/auth/change-password", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/change-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email, password: password })

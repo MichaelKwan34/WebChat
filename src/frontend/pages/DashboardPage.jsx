@@ -41,7 +41,7 @@ export default function DashboardPage() {
 
       setCurrentUser(payload.username);
 
-      socketRef.current = io("http://localhost:3000", {
+      socketRef.current = io(`${import.meta.env.VITE_API_URL}`, {
         autoConnect: true
       });
 
