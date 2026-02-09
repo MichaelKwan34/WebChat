@@ -92,7 +92,7 @@ router.post("/forgot-password", async (req, res) => {
     }
   }
   
-  res.json({ message: "Verification code has been sent!" });
+  res.status(201).json({ message: "Verification code has been sent!" });
 });
 
 // Verify OTP code
