@@ -3,27 +3,26 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Courier New', Courier, monospace;
+  color: white;
 }
 
 body, html {
-  overflow-y: hidden;
+  width: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  background: #1b2a41;
 }
 
 section {
   display: flex;
-  height: 100vh;
-  width: 100%;
-  color: white;
-  background:
-    radial-gradient(1200px circle at 20% 10%, rgba(90, 130, 255, 0.18), transparent 40%),
-    radial-gradient(900px circle at 80% 90%, rgba(60, 200, 255, 0.12), transparent 45%),
-    linear-gradient(135deg, #141e30, #1b2a41, #243b55);
+  height: 100dvh;
+  min-width: 100dvw;
+  overflow-x: hidden;
 }
 
 .left-side {
   height: 100%;
-  width: 25%;
-  min-width: 235px;
+  width: clamp(235px, 25%, 350px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -162,6 +161,17 @@ nav ul li a #person-icon {
   font-size: 1.4em;
   margin-top: 4px;
 }
+
+
+
+
+
+
+
+
+
+
+
 
 .right-side {
   display: flex;
@@ -398,4 +408,140 @@ nav ul li a #person-icon {
 
 .button-hidden {
   display: none;
+}
+
+
+/* ---------- LANDSCAPE MODE ---------- */
+
+/* all phones */
+@media (max-height: 375px) and (orientation: landscape) {
+  html, body {
+    overflow: auto;
+    background: #1b2a41;
+  }
+
+  section {
+    overflow-y: hidden;
+  }
+
+  .login-form, .register-form, .forgot-form, .otp-form, .reset-form {
+    border: none;
+  }
+
+  .login-form {
+    height: 600px;
+  }
+
+  h1 {
+    font-size: 1.7em;
+  }
+
+  .inputbox {
+    width: 450px;
+    min-width: 450px;
+  }
+
+  .forgot-form, .otp-form, .reset-form {
+    min-height: 200px;
+    top: 15%;
+  }
+
+  #resetBackIcon, #otpBackIcon,#newPassBackIcon  {
+    transform: translate(-15%, -8%);
+  }
+} 
+
+/* ---------- PORTRAIT MODE ---------- */
+
+/* normal phones */
+@media (max-width: 414px) and (orientation: portrait) {
+  html, body {
+    height: 100%;
+    margin-top: 3.5%;
+  } 
+
+  section {
+    padding-top:5%;
+  }
+  
+  .left-side {
+    width: clamp(159px, 20%, 250px);
+  }
+
+  .message-input input {
+    width: 100%;
+  }
+}
+
+/* small phones */
+@media (max-width: 375px) and (orientation: portrait) {
+  html, body {
+    margin-top:0.5%;
+  }
+
+  section {
+    padding-top:0;
+  }
+
+  .left-side {
+    width: clamp(144px, 20%, 250px);
+  }
+}
+
+/* small laptops / iPads */
+@media (max-width: 1024px) and (orientation: portrait) {
+  html, body {
+      height: 100%;
+      overflow:hidden;
+      overscroll-behavior:none;
+  }
+
+  section {
+    margin-top: 12.8%; 
+  }
+  
+  .left-side {
+    overflow:hidden;
+  }
+}
+
+/* tablets / iPad mini */
+@media (max-width: 768px) and (orientation: portrait) {
+  html, body {
+      height: 100%;
+      overflow:hidden;
+      overscroll-behavior:none;
+  }
+
+  section {
+    margin-top: 14.1%; 
+  }
+
+  .left-side {
+    overflow:hidden;
+  }
+}
+
+/* ---------- LANDSCAPE MODE ---------- */
+
+/* all phones NOT YET */
+@media (max-height: 375px) and (orientation: landscape) {
+
+}
+
+/* small tablets / iPads landscape */
+@media (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
+  html, body {
+    height: 100%;
+    overflow:hidden;
+    overscroll-behavior:none;
+  }
+
+  section {
+    margin-top: 3.5%;
+  }
+
+  .left-side {
+    overflow:hidden;
+  }
 }
