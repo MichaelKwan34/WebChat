@@ -6,7 +6,8 @@
   color: white;
 }
 
-body, html {
+body,
+html {
   width: 100%;
   overflow-x: hidden;
   overscroll-behavior-x: none;
@@ -26,9 +27,9 @@ section {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: rgba(0,0,0,0.3);
+  background-color: rgba(0, 0, 0, 0.3);
   overflow-y: auto;
-  border-right: 2px solid rgba(255,255,255,0.3);
+  border-right: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .left-side-header {
@@ -57,7 +58,7 @@ section {
   padding: 5px 10px 5px 40px;
   border: none;
   border-radius: 2px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   text-align: left;
   font-size: 16px;
@@ -73,7 +74,7 @@ section {
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 1.2rem;
   pointer-events: none;
 }
@@ -112,7 +113,7 @@ section {
 nav {
   width: 100%;
   height: 55px;
-  border-top: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 nav ul {
@@ -143,7 +144,7 @@ nav ul li a {
 }
 
 nav ul li a ion-icon {
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   transition: color 0.2s, transform 0.2s;
 }
 
@@ -162,22 +163,11 @@ nav ul li a #person-icon {
   margin-top: 4px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 .right-side {
   display: flex;
   flex: 1;
   flex-direction: column;
-  background-color: rgba(0,0,0,0.2);
+  background-color: rgba(0, 0, 0, 0.2);
   height: 100%;
   overflow-y: auto;
 }
@@ -245,7 +235,7 @@ nav ul li a #person-icon {
 .send-btn ion-icon {
   font-size: 25px;
   padding-left: 3px;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .send-btn:hover ion-icon {
@@ -264,14 +254,15 @@ nav ul li a #person-icon {
 
 .message.sent {
   align-self: flex-end;
-  background-color: rgba(120, 170, 255, 0.25);;
+  background-color: rgba(120, 170, 255, 0.25);
+  ;
   color: white;
   border-bottom-right-radius: 0;
 }
 
 .message.received {
   align-self: flex-start;
-  background-color: rgba(255,255,255,0.2);
+  background-color: rgba(255, 255, 255, 0.2);
   border-bottom-left-radius: 0;
 }
 
@@ -284,8 +275,8 @@ nav ul li a #person-icon {
 }
 
 .messages {
-  border-top: 2px solid rgba(255,255,255,0.3);
-  border-bottom: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
   overflow-y: auto;
   flex: 1 1 auto;
   display: flex;
@@ -319,7 +310,7 @@ nav ul li a #person-icon {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-top: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .add-contact-wrapper {
@@ -344,13 +335,13 @@ nav ul li a #person-icon {
   user-select: none;
 }
 
-#searchInfo.found { 
-  color: #6AD195; 
+#searchInfo.found {
+  color: #6AD195;
 }
 
-#searchInfo.not-found { 
-  color: #F06B6F; 
-} 
+#searchInfo.not-found {
+  color: #F06B6F;
+}
 
 .add-or-message {
   display: flex;
@@ -367,7 +358,7 @@ nav ul li a #person-icon {
   cursor: pointer;
   font-size: 16px;
   font-weight: 1;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
@@ -377,17 +368,17 @@ nav ul li a #person-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-top: 2px solid rgba(255,255,255,0.3)
+  border-top: 2px solid rgba(255, 255, 255, 0.3)
 }
 
-.logoutBtn{
+.logoutBtn {
   width: 100%;
   height: 40px;
   margin: 0 5%;
   font-size: 16px;
   border: none;
   cursor: pointer;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   user-select: none;
   border-radius: 20px;
@@ -410,60 +401,59 @@ nav ul li a #person-icon {
   display: none;
 }
 
+/* ---------- PORTRAIT MODE ---------- */
 
-/* ---------- LANDSCAPE MODE ---------- */
+/* small laptops / iPads */
+@media (max-width: 1024px) and (orientation: portrait) {
 
-/* all phones */
-@media (max-height: 375px) and (orientation: landscape) {
-  html, body {
-    overflow: auto;
-    background: #1b2a41;
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
   section {
-    overflow-y: hidden;
+    margin-top: 12.8%;
   }
 
-  .login-form, .register-form, .forgot-form, .otp-form, .reset-form {
-    border: none;
+  .left-side {
+    overflow: hidden;
+  }
+}
+
+/* tablets / iPad mini */
+@media (max-width: 768px) and (orientation: portrait) {
+
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
-  .login-form {
-    height: 600px;
+  section {
+    margin-top: 14.1%;
   }
 
-  h1 {
-    font-size: 1.7em;
+  .left-side {
+    overflow: hidden;
   }
-
-  .inputbox {
-    width: 450px;
-    min-width: 450px;
-  }
-
-  .forgot-form, .otp-form, .reset-form {
-    min-height: 200px;
-    top: 15%;
-  }
-
-  #resetBackIcon, #otpBackIcon,#newPassBackIcon  {
-    transform: translate(-15%, -8%);
-  }
-} 
-
-/* ---------- PORTRAIT MODE ---------- */
+}
 
 /* normal phones */
 @media (max-width: 414px) and (orientation: portrait) {
-  html, body {
+
+  html,
+  body {
     height: 100%;
     margin-top: 3.5%;
-  } 
+  }
 
   section {
-    padding-top:5%;
+    padding-top: 5%;
   }
-  
+
   .left-side {
     width: clamp(159px, 20%, 250px);
   }
@@ -475,12 +465,14 @@ nav ul li a #person-icon {
 
 /* small phones */
 @media (max-width: 375px) and (orientation: portrait) {
-  html, body {
-    margin-top:0.5%;
+
+  html,
+  body {
+    margin-top: 0.5%;
   }
 
   section {
-    padding-top:0;
+    padding-top: 0;
   }
 
   .left-side {
@@ -488,53 +480,16 @@ nav ul li a #person-icon {
   }
 }
 
-/* small laptops / iPads */
-@media (max-width: 1024px) and (orientation: portrait) {
-  html, body {
-      height: 100%;
-      overflow:hidden;
-      overscroll-behavior:none;
-  }
-
-  section {
-    margin-top: 12.8%; 
-  }
-  
-  .left-side {
-    overflow:hidden;
-  }
-}
-
-/* tablets / iPad mini */
-@media (max-width: 768px) and (orientation: portrait) {
-  html, body {
-      height: 100%;
-      overflow:hidden;
-      overscroll-behavior:none;
-  }
-
-  section {
-    margin-top: 14.1%; 
-  }
-
-  .left-side {
-    overflow:hidden;
-  }
-}
-
 /* ---------- LANDSCAPE MODE ---------- */
-
-/* all phones NOT YET */
-@media (max-height: 375px) and (orientation: landscape) {
-
-}
 
 /* small tablets / iPads landscape */
 @media (max-width: 1366px) and (max-height: 900px) and (orientation: landscape) {
-  html, body {
+
+  html,
+  body {
     height: 100%;
-    overflow:hidden;
-    overscroll-behavior:none;
+    overflow: hidden;
+    overscroll-behavior: none;
   }
 
   section {
@@ -542,6 +497,13 @@ nav ul li a #person-icon {
   }
 
   .left-side {
-    overflow:hidden;
+    overflow: hidden;
+  }
+}
+
+/* all phones */
+@media (max-height: 375px) and (orientation: landscape) {
+  section {
+    margin-top: 2.1%;
   }
 }
