@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
     const viaUsername = await User.findOne({ username: username });
     const viaEmail = await User.findOne( { email: username });
 
-    if (!viaUsername && viaEmail) {
+    if (!viaUsername && !viaEmail) {
         return res.status(404).json({ match: false, message: "User not found"});
     }
 

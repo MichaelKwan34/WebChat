@@ -41,7 +41,7 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
         navigate("/dashboard", { replace:true });
         showToast("Login Successfull", "success");
       } else {
-        showToast("Username or password is incorrect", "error");
+        showToast("Username/Email or password is incorrect", "error");
         setPasswordLogin("");
       }
     } catch (err) {
