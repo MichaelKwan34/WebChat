@@ -56,7 +56,6 @@ async function sendEmail(email, code) {
     to: email,
     subject: "Your OTP Code",
     html: `
-      <p>Hello ${user.username},</p>
       <p>Your verification code is:</p>
       <h1>${code}</h1>
       <p>This code expires in 10 minutes.</p>
