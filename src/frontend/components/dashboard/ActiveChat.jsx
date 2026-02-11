@@ -49,7 +49,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
       await fetch(`/api/users/${currentUser}/update-chats`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat: activeChat })
+        body: JSON.stringify({ activeChat: activeChat })
       });
 
       socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent})

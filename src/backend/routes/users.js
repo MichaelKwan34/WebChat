@@ -76,25 +76,34 @@ router.get("/find-user/:currentUser/:username", async (req, res) => {
 // Update the order of chats for a user
 router.put("/:username/update-chats", async (req, res) => {
   const { username } = req.params;
-  const { chat } = req.body;
+  const { activeChat } = req.body;
 
-  if (!chat) {
-    return res.status(400).json({ message: "chat is required in body" });
+  if (!activeChat) {
+    return res.status(400).json({ message: "activeChat is required in body" });
   }
 
   try {
     const user = await User.findOne({ username });
+    const anotherUser = await User.findOne({ username: activeChat })
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const filteredChats = user.chats.filter(c => c !== chat);
+    if (!anotherUser) {
+      return res.status(404).json({ message: "The other user is not found" });
+    }
 
-    user.chats = [chat, ...filteredChats];
+    const filteredChatsUser = user.chats.filter(c => c !== activeChat);
+    const filteredChatsAnotherUser = anotherUser.chats.filter(c => c !== username);
+    
+    user.chats = [activeChat, ...filteredChatsUser];
+    anotherUser.chats = [username, ...filteredChatsAnotherUser];
 
     await user.save();
+    await anotherUser.save();
 
-    res.json({ message: "Chats updated successfully", chats: user.chats });
+    res.json({ message: "Chats updated successfully" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to update chats" });
