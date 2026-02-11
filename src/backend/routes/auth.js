@@ -49,31 +49,32 @@ router.post("/login", async (req, res) => {
 
 // Helper function to send OTP email
 async function sendEmail(email, code) {
-  const user = await User.findOne({ email });
-  const sender = "WebChat <webchat-michaelkwan.onrender.com>";
-  const receiver = user.username;
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD,
-      }
+      },
     });
 
-    const emailParams = {
-      from: sender,
+    const mailOptions = {
+      from: `WebChat <${process.env.GMAIL_USER}>`,
       to: email,
       subject: "Your OTP Code",
-      text: `Hello ${receiver}, your OTP code is ${code}. It expires in 10 minutes.`,
-      html: `<p>Hello ${receiver},</p>
+      text: `Hello ${email}, your OTP code is ${code}. It expires in 10 minutes.`,
+      html: `<p>Hello ${email},</p>
              <p>Your verification code is:</p>
              <h1>${code}</h1>
              <p>This code will expire in 10 minutes.</p>`,
     };
-    await transporter.sendMail(emailParams);
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", result.messageId);
+    return true;
   } catch (err) {
-    return res.status(500).json({ message: "Failed to send email" });
+    console.error("Error sending email:", err);
+    return false;
   }
 }
 
