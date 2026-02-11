@@ -4,6 +4,9 @@ import { showToast } from "../../utils/toast.js"
 
 export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages }) {
   const navigate = useNavigate();
+  const [loadingChat, setLoadingChat] = useState(false);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [loadingAddContact, setLoadingAddContact] = useState(false);
 
   const [searchedUsername, setSearchedUsername] = useState("");
   const [searchInfo, setSearchInfo] = useState("information")
@@ -25,6 +28,10 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
   };
 
   const handleFriendClick = async (friend) => {
+    if (loadingChat) return;
+
+    setLoadingChat(true);
+
     try {
       const resConversationId = await fetch(`/api/conversations/${currentUser}/${friend}`);
       const dataConversationId = await resConversationId.json();
@@ -32,12 +39,14 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
       const resMsg = await fetch(`/api/messages/${dataConversationId.conversationId}`)
       const dataMsg = await resMsg.json();
+
       setMessages(dataMsg)
-      
       setActiveFriend(friend);
       setActiveChat(friend);
     } catch (err) {
-      console.log(err.message);
+      showToast("Failed to load conversation", "error");
+    } finally {
+      setLoadingChat(false);
     }
   };
 
@@ -51,6 +60,8 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
   }
   
   const handleSearch = async (username) => {
+    if (loadingSearch) return;
+
     if (!isValidCharacters(username)) {
       setSearchInfo("User not found")
       setAddVisible(false);
@@ -59,52 +70,80 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       return;
     }
 
-    const res = await fetch (`/api/users/find-user/${currentUser}/${username}`);
-    const data = await res.json();
+    setLoadingSearch(true);
 
-    setInfoVisible(true);
-    setAddVisible(true);
-    setMsgVisible(true);
-    setStatus("found");
-    setSearchedUsername(username);
+    try {
+      const res = await fetch (`/api/users/find-user/${currentUser}/${username}`);
 
-    if (data.exists) {
-      if (data.user.friends.includes(username)) {
-        setSearchInfo(`'${data.searchedUser}' is already your friend`);
-        setAddVisible(false);
+      if (!res.ok) {
+        throw new Error("Search failed");
       }
-      else if (data.searchedUser === currentUser) {
-        setSearchInfo("You can't add youself");
+
+      const data = await res.json();
+
+      setInfoVisible(true);
+      setAddVisible(true);
+      setMsgVisible(true);
+      setStatus("found");
+      setSearchedUsername(username);
+
+      if (data.exists) {
+        if (data.user.friends.includes(username)) {
+          setSearchInfo(`'${data.searchedUser}' is already your friend`);
+          setAddVisible(false);
+        }
+        else if (data.searchedUser === currentUser) {
+          setSearchInfo("You can't add youself");
+          setAddVisible(false);
+          setMsgVisible(false);
+          setStatus("");
+        }
+        else if (data.searchedUser !== currentUser) {
+          setSearchInfo(`Found: ${username}`);
+        }
+      } else {
+        setSearchInfo("User not found")
         setAddVisible(false);
         setMsgVisible(false);
-        setStatus("");
+        setStatus("not-found");
       }
-      else if (data.searchedUser !== currentUser) {
-        setSearchInfo(`Found: ${username}`);
-      }
-    }
-    else {
-      setSearchInfo("User not found")
-      setAddVisible(false);
-      setMsgVisible(false);
-      setStatus("not-found");
+    } catch (err) {
+      showToast("Search failed", "error");
+    } finally {
+      setLoadingSearch(false);
     }
   };
 
   const handleAddContact = async () => {
-    const res = await fetch(`/api/users/add-contact/${currentUser}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
-      body: JSON.stringify({searchedUsername: searchedUsername})
-    });
+    if (loadingAddContact) return;
 
-    const data = await res.json();
+    setLoadingAddContact(true);
 
-    if (data.success) {
-      showToast(data.message, "success");
-      setSearchInfo(`'${searchedUsername}' is already your friend`);
-      setAddVisible(false);
-      fetchFriends();
+    try {
+       const res = await fetch(`/api/users/add-contact/${currentUser}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify({searchedUsername: searchedUsername})
+      });
+
+      if (!res.ok) {
+        throw new Error("Request to add contact failed");
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        showToast(data.message, "success");
+        setSearchInfo(`'${searchedUsername}' is already your friend`);
+        setAddVisible(false);
+        fetchFriends();
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (err) {
+      showToast("Add contact failed", "error");
+    } finally {
+      setLoadingAddContact(false);
     }
   }
 
@@ -179,7 +218,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
         <div className="add-contact-wrapper">
           <div className="search-wrapper search-contact-wrapper">
             <ion-icon name="search-outline" id="search-icon"></ion-icon>
-            <input type="text" autoComplete="off" placeholder="Enter username" value={searchedUsername} 
+            <input type="text" autoComplete="off" placeholder="Search" value={searchedUsername} 
                   onChange={(e) => { 
                     const val = e.target.value.toLowerCase();
                     setSearchedUsername(val); 

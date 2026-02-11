@@ -25,21 +25,32 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (loading) return
-    setLoading(true)
+    if (loading) return;
 
     const email = emailReset.trim().toLowerCase();
 
-    if (validatePassword(newPassword)) {
-      const res = await changePassword(email, newPassword);
-      setEmailReset("");
-      setNewPassword("");
-      showToast(res.message, "success")
-      setView("login");
-    } else {
+    if (!validatePassword(newPassword)) {
       showToast("Password must include letters, numbers, and a capital letter", "error");
+      return;
     }
-    setLoading(false)
+
+    setLoading(true);
+
+    try {
+      const res = await changePassword(email, newPassword);
+      if (res.ok) {
+        setEmailReset("");
+        setNewPassword("");
+        showToast(res.message, "success");
+        setView("login");
+      } else {
+        showToast(res.message, "error");
+      }
+    } catch (err) {
+      showToast("Server error (Reset Password)", "error");
+    } finally {
+      setLoading(false);
+    }
   };
   
   return (

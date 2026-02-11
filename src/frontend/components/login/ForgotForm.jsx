@@ -12,21 +12,20 @@ export default function ForgotForm({ setView, emailReset, setEmailReset }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return
-    setLoading(true)
 
     const email = emailReset.trim().toLowerCase();
 
     if (!email) {
       showToast("Please enter your email", "error");
-      setLoading(false);
       return;
     }
 
     if (!(validateEmailFormat(email))) {
       showToast("Please check your email address format", "error");
-      setLoading(false);
       return;
     }
+
+    setLoading(true)
 
     try {
       const res = await fetch(`/api/auth/forgot-password`, {

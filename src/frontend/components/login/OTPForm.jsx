@@ -46,26 +46,28 @@ export default function OTPForm({ setView, emailReset}) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-    setLoading(true);
 
     const otpRefs = [otp1, otp2, otp3, otp4, otp5, otp6];
     const otp = otpRefs.map(ref => ref.current.value).join("");
 
+    if (otp.length !== 6) {
+      showToast("Please enter the 6-digit code", "error");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      if (otp.length !== 6) {
-        showToast("Please enter the 6-digit code", "error");
-        return;
-      }
-
       const res = await verifyOTP(emailReset, otp);
-
       if (res.isMatch === true) {
         showToast(res.message, "success");
-        setView("reset")
+        setView("reset");
         resetOtpInput();
       } 
     } catch (err) {
       showToast("Invalid or expired OTP. Please try again.", "error");
+    } finally {
+      setLoading(false);
     }
   };
 

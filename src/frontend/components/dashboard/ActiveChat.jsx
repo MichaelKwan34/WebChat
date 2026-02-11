@@ -1,30 +1,35 @@
 import { useState, useRef, useEffect } from "react";
 
 export default function ActiveChat({ socket, currentUser, activeChat, conversationId, messages, setMessages, setChats }) {
+  const [loadingSend, setLoadingSend] = useState(false);
+
   const [text, setText] = useState("");
   const messagesEndRef = useRef(null);
 
   const handleSend = async () => {
+    if (loadingSend) return;
+    setLoadingSend(true);
+    
     const trimmedText = text.trim();
 
     try {
       const res = await fetch(`/api/messages/${conversationId}`, {
-          method: "POST",
-          headers: { 
-            "Content-Type" : "application/json",
-          },
-          body: JSON.stringify({
-            sender: currentUser,
-            msg: trimmedText,
-            receiver: activeChat
-          })
-        });
-
-      const data = await res.json();
+        method: "POST",
+        headers: { 
+          "Content-Type" : "application/json",
+        },
+        body: JSON.stringify({
+          sender: currentUser,
+          msg: trimmedText,
+          receiver: activeChat
+        })
+      });
 
       if (!res.ok) {
         throw new Error(data.message);
       }
+
+      const data = await res.json();
 
       setText("");
       setMessages(prevMessages => [
@@ -48,9 +53,10 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
       });
 
       socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent})
-      } 
-      catch (err) {
-        console.log(err.message)
+    } catch (err) {
+      showToast("Failed to send a message", "error");
+    } finally {
+      setLoadingSend(false);
     }
   };
 

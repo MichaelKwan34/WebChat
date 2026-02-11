@@ -41,46 +41,41 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-    setLoading(true);
 
     const username = usernameRegister.trim().toLowerCase();
     const email = emailRegister.trim().toLowerCase();
 
     if (!isValidUsernameLength(username)) {
       showToast("Username must be 3–20 characters", "error");
-      setLoading(false);
       return;
     }
 
     if (!isValidUsernameChars(username)) {
       showToast("Username can contain only letters, numbers, and _", "error");
-      setLoading(false);
       return;
     }
 
     if (!validateEmailFormat(email)) {
       showToast("Please check your email address format", "error")
-      setLoading(false);
       return
     }
 
     if (!validatePassword(passwordRegister)) {
       showToast("Password must include letters, numbers, and a capital letter", "error")
-      setLoading(false);
       return;
     }
 
     if (!(await isUsernameAvailable(username))) {
       showToast("Oops! That username is already taken", "error");
-      setLoading(false);
       return;
     }
 
     if (!(await isEmailAvailable(email))) {
       showToast("That email address is already registered", "error");
-      setLoading(false);
       return;
     }
+
+    setLoading(true);
 
     try {
       const res = await fetch(`/api/auth/register`, {

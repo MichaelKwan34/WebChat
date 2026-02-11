@@ -12,16 +12,16 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
     e.preventDefault();
 
     if (loading) return;
-    setLoading(true)
 
     const username = usernameLogin.trim().toLowerCase();
     const password = passwordLogin;
 
     if (!username || !password) {
       showToast("Please enter username and password", "error");
-      setLoading(false)
       return;
     }
+
+    setLoading(true);
 
     try {
       const res = await fetch(`/api/auth/login`, {
@@ -47,7 +47,7 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
     } catch (err) {
       showToast("Server error (Login)", "error");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
   
