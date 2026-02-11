@@ -411,6 +411,12 @@ nav ul li a #person-icon {
     overscroll-behavior: none;
   }
 
+  section {
+    padding:0;
+    transform: translateY(0%);
+    margin:0;
+  }
+
   .left-side, .right-side {
     overflow: hidden;
   }

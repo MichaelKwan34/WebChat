@@ -50,7 +50,6 @@ router.post("/login", async (req, res) => {
 
 // Helper function to send OTP email
 async function sendEmail(email, code) {
-  const user = await User.findOne({ email });
   await resend.emails.send({
     from: "WebChat <onboarding@resend.dev>",
     to: email,
