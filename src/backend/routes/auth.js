@@ -3,9 +3,10 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import { Resend } from "resend"
 
 const router = express.Router();
+const resend = new Resend(process.env.RESEND_API);
 
 // Add an account to DB
 router.post("/register", async (req, res) => {
@@ -49,33 +50,18 @@ router.post("/login", async (req, res) => {
 
 // Helper function to send OTP email
 async function sendEmail(email, code) {
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    });
-
-    const mailOptions = {
-      from: `WebChat <${process.env.GMAIL_USER}>`,
-      to: email,
-      subject: "Your OTP Code",
-      text: `Hello ${email}, your OTP code is ${code}. It expires in 10 minutes.`,
-      html: `<p>Hello ${email},</p>
-             <p>Your verification code is:</p>
-             <h1>${code}</h1>
-             <p>This code will expire in 10 minutes.</p>`,
-    };
-
-    const result = await transporter.sendMail(mailOptions);
-    console.log("Email sent:", result.messageId);
-    return true;
-  } catch (err) {
-    console.error("Error sending email:", err);
-    return false;
-  }
+  const user = await User.findOne({ email });
+  await resend.emails.send({
+    from: "WebChat <onboarding@resend.dev>",
+    to: email,
+    subject: "Your OTP Code",
+    html: `
+      <p>Hello ${user.username},</p>
+      <p>Your verification code is:</p>
+      <h1>${code}</h1>
+      <p>This code expires in 10 minutes.</p>
+    `,
+  });
 }
 
 // Send OTP code to the specified email
