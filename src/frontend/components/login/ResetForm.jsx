@@ -38,10 +38,14 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
 
     try {
       const res = await changePassword(email, newPassword);
-      setEmailReset("");
-      setNewPassword("");
-      showToast(res.message, "success");
-      setView("login");
+      if (res.status === 201) {
+        setEmailReset("");
+        setNewPassword("");
+        showToast(res.message, "success");
+        setView("login");
+      } else {
+        showToast(res.message, "error");
+      }
     } catch (err) {
       showToast("Server error (Reset Password)", "error");
     } finally {
