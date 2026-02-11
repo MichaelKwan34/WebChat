@@ -86,6 +86,26 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  function formatMessageTime(dateStr) {
+    const msgDate = new Date(dateStr);
+    const now = new Date();
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const startOfYesterday = new Date(startOfToday);
+    startOfYesterday.setDate(startOfToday.getDate() - 1);
+
+    const startOfWeekAgo = new Date(startOfToday);
+    startOfWeekAgo.setDate(startOfToday.getDate() - 7);
+
+    const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false};
+
+    if (msgDate >= startOfToday) return `Today, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else if (msgDate >= startOfYesterday) return `Yesterday, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else if (msgDate >= startOfWeekAgo) return `${msgDate.toLocaleDateString([], { weekday: 'long' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else return `${msgDate.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+  }
+
   return (
     <div className="active-view">
       <div className="right-side-header">
@@ -100,7 +120,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
               <div key={index} className={`message ${messageClass}`}>
                 <p className="message-content">{msg.text}</p>
                 <span className="message-time">
-                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' })}
+                  {formatMessageTime(msg.createdAt)}
                 </span>
               </div>
             );

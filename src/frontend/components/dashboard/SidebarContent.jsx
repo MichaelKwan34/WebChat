@@ -218,7 +218,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
         <div className="add-contact-wrapper">
           <div className="search-wrapper search-contact-wrapper">
             <ion-icon name="search-outline" id="search-icon"></ion-icon>
-            <input type="text" autoComplete="off" placeholder="Search" value={searchedUsername} 
+            <input type="text" autoComplete="off" placeholder="Search" value={searchedUsername} disabled={loadingSearch}
                   onChange={(e) => { 
                     const val = e.target.value.toLowerCase();
                     setSearchedUsername(val); 
@@ -232,8 +232,8 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
           </div>
           <p className={`${infoVisible ? "visible" : "hidden"} ${status}`} id="searchInfo">{searchInfo}</p>
           <div className="add-or-message">
-            <button className={addVisible ? "button-visible" : "button-hidden"} onClick={handleAddContact}>Add</button>
-            <button className={msgVisible ? "button-visible" : "button-hidden"} onClick={(e) => handleChatClick(searchedUsername)}>Message</button>
+            <button className={addVisible ? "button-visible" : "button-hidden"} onClick={handleAddContact} disabled={loadingAddContact}>Add</button>
+            <button className={msgVisible ? "button-visible" : "button-hidden"} onClick={(e) => handleChatClick(searchedUsername)} disabled={loadingChat}>Message</button>
           </div>
         </div>
       </div>

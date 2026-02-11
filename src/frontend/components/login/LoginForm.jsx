@@ -58,7 +58,7 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
         <div className="inputbox">
           <ion-icon name="person-outline"></ion-icon>
           <input type="text" autoComplete="off" required value={usernameLogin} onChange={(e) => setUsernameLogin(e.target.value.trimStart())}/>
-          <label>Username</label>
+          <label>Username or Email</label>
         </div>
 
         <div className="inputbox">
