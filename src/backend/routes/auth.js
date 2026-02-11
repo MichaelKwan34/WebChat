@@ -3,10 +3,9 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import nodemailer from "nodemailer";
 
 const router = express.Router();
-const mailerSend = new MailerSend({ apiKey: process.env.MAILERSEND_TOKEN });
 
 // Add an account to DB
 router.post("/register", async (req, res) => {
@@ -51,25 +50,31 @@ router.post("/login", async (req, res) => {
 // Helper function to send OTP email
 async function sendEmail(email, code) {
   const user = await User.findOne({ email });
-  const sentFrom = new Sender("no-reply@test-nrw7gymnxkog2k8e.mlsender.net", "WebChat");
-  const recipients = [new Recipient(email, user.username)];
+  const sender = "WebChat <webchat-michaelkwan.onrender.com>";
+  const receiver = user.username;
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      }
+    });
 
-  const emailParams = new EmailParams()
-    .setFrom(sentFrom)
-    .setTo(recipients)
-    .setSubject("Your OTP Code")
-    .setHtml(`
-      <p>Your verification code is:</p>
-      <h1>${code}</h1>
-      <p>This code will expire in 10 minutes.</p>
-    `)
-    .setText(`Your OTP code is ${code}. It will expire in 10 minutes.`);
-
-    try {
-      await mailerSend.email.send(emailParams);
-    } catch (err) {
-      return res.status(500).json({ message: "Failed to send email" });
-    }
+    const emailParams = {
+      from: sender,
+      to: email,
+      subject: "Your OTP Code",
+      text: `Hello ${receiver}, your OTP code is ${code}. It expires in 10 minutes.`,
+      html: `<p>Hello ${receiver},</p>
+             <p>Your verification code is:</p>
+             <h1>${code}</h1>
+             <p>This code will expire in 10 minutes.</p>`,
+    };
+    await transporter.sendMail(emailParams);
+  } catch (err) {
+    return res.status(500).json({ message: "Failed to send email" });
+  }
 }
 
 // Send OTP code to the specified email
