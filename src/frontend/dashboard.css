@@ -6,8 +6,7 @@
   color: white;
 }
 
-body,
-html {
+body, html {
   width: 100%;
   overflow-x: hidden;
   overscroll-behavior-x: none;
@@ -102,7 +101,6 @@ section {
 
 .left-side .left-content ul li.active {
   background: rgba(120, 170, 255, 0.25);
-
 }
 
 .left-side ul::-webkit-scrollbar {
@@ -413,11 +411,7 @@ nav ul li a #person-icon {
     overscroll-behavior: none;
   }
 
-  section {
-    margin-top: 12.8%;
-  }
-
-  .left-side {
+  .left-side, .right-side {
     overflow: hidden;
   }
 }
@@ -433,10 +427,11 @@ nav ul li a #person-icon {
   }
 
   section {
-    margin-top: 14.1%;
+    margin-top: 0%;
+    transform: translateY(0%);
   }
 
-  .left-side {
+  .left-side, .right-side {
     overflow: hidden;
   }
 }
@@ -447,11 +442,6 @@ nav ul li a #person-icon {
   html,
   body {
     height: 100%;
-    margin-top: 3.5%;
-  }
-
-  section {
-    padding-top: 5%;
   }
 
   .left-side {
@@ -461,6 +451,10 @@ nav ul li a #person-icon {
   .message-input input {
     width: 100%;
   }
+
+  .left-side, .right-side {
+    overflow: hidden;
+  }
 }
 
 /* small phones */
@@ -468,7 +462,7 @@ nav ul li a #person-icon {
 
   html,
   body {
-    margin-top: 0.5%;
+    margin-top: 0%;
   }
 
   section {
@@ -477,6 +471,10 @@ nav ul li a #person-icon {
 
   .left-side {
     width: clamp(144px, 20%, 250px);
+  }
+
+  .left-side, .right-side {
+    overflow: hidden;
   }
 }
 
@@ -493,7 +491,7 @@ nav ul li a #person-icon {
   }
 
   section {
-    margin-top: 3.5%;
+    transform: translateY(0%);
   }
 
   .left-side {
@@ -504,6 +502,8 @@ nav ul li a #person-icon {
 /* all phones */
 @media (max-height: 375px) and (orientation: landscape) {
   section {
-    margin-top: 2.1%;
+    padding: 0;
+    margin: 0;
+    transform: translateY(0%);
   }
 }
