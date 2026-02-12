@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { showToast } from "../../utils/toast.js"
 
-export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages }) {
+export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages, unreadCounts, setUnreadCounts }) {
   const navigate = useNavigate();
   const [loadingChat, setLoadingChat] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -43,6 +43,18 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       setMessages(dataMsg)
       setActiveFriend(friend);
       setActiveChat(friend);
+
+      await fetch(`/api/users/${currentUser}/reset-unread`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activeChat: friend })
+      });
+
+      setUnreadCounts(prev => ({
+        ...prev,
+        [friend]: 0
+      }));
+
     } catch (err) {
       showToast("Failed to load conversation", "error");
     } finally {
@@ -164,6 +176,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       if (!res.ok) throw new Error("Failed to fetch chats");
       const data = await res.json();
       setChats(data.chats);
+      setUnreadCounts(data.unreadCounts || {});
     } catch (err) {
       showToast("Failed to fetch chats", "error");
     }
@@ -206,6 +219,11 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
             onClick={() => handleChatClick(chat)}
           >
             {chat}
+            {unreadCounts[chat] > 0 && (
+              <span className="unread"> 
+                  ({unreadCounts[chat] })
+              </span>
+            )}
           </li>
         ))}
       </ul>

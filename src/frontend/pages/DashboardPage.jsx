@@ -15,6 +15,7 @@ export default function DashboardPage() {
 
   const [friends, setFriends] = useState([]);
   const [chats, setChats] = useState([]);
+  const [unreadCounts, setUnreadCounts] = useState({});
 
   const [activeFriend, setActiveFriend] = useState(null);
   const [activeChat, setActiveChat] = useState(null);
@@ -60,6 +61,31 @@ export default function DashboardPage() {
     };
   }, [navigate]);
 
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    const socket = socketRef.current;
+
+    const handlePrivateMessage = ({ from, to, text, time }) => {
+      if (from === activeChat && to === currentUser) {
+        setMessages(prev => [...prev, { sender: from, text, createdAt: time }]);
+      } else if (to === currentUser) {
+        setUnreadCounts(prev => ({ ...prev,[from]: (prev[from] || 0) + 1}));
+      }
+      setChats(prevChats => {
+        if (!prevChats.includes(from)) return [from, ...prevChats];
+        const filtered = prevChats.filter(chat => chat !== from);
+        return [from, ...filtered];
+      });
+    };
+
+    socket.on("private_message", handlePrivateMessage);
+
+    return () => {
+      socket.off("private_message", handlePrivateMessage);
+    };
+  }, [currentUser, activeChat]);
+
   return (
     <section>
       <Sidebar
@@ -78,6 +104,8 @@ export default function DashboardPage() {
         setConversationId={setConversationId}
         messages={messages}
         setMessages={setMessages}
+        unreadCounts={unreadCounts}
+        setUnreadCounts={setUnreadCounts}
         />
 
       <ChatArea 
@@ -87,7 +115,8 @@ export default function DashboardPage() {
         conversationId={conversationId}
         messages={messages}
         setMessages={setMessages}
-        setChats={setChats}/>
+        setChats={setChats}
+        />
     </section>
   );
 }

@@ -45,6 +45,7 @@ router.post("/:conversationId", async (req, res) => {
     }
 
     await message.save();
+    await User.findOneAndUpdate({ username: receiver }, { $inc: { [`unreadCounts.${sender}`]: 1 } });
     res.status(201).json({ message: "Message successfully sent", timeSent: message.createdAt.toISOString()});
   } catch (err) {
     res.status(500).json({ message: "Failed to send the message" });

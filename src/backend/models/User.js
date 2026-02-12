@@ -6,6 +6,7 @@ const UserSchema = new mongoose.Schema({
     password: {type: String, required: true},
     friends: {type: [String], default: []},
     chats: {type: [String], default: []},
+    unreadCounts: { type: Map, of: Number, default: {}},
     resetCode: {type: String},
     resetCodeExpires: {type: Date},
     resetCodeAttempts: {type: Number}

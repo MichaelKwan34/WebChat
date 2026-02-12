@@ -61,28 +61,6 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
   };
 
   useEffect(() => {
-    if (!socket) return;
-
-    const handlePrivateMessage = ({ from, to, text, time }) => {
-      if (from === activeChat && to === currentUser) {
-        setMessages(prev => [...prev, { sender: from, text, createdAt: time }]);
-      }
-      
-      setChats(prevChats => {
-        if (!prevChats.includes(from)) return [from, ...prevChats];
-        const filtered = prevChats.filter(chat => chat !== from);
-        return [from, ...filtered];
-      });
-    };
-
-    socket.on("private_message", handlePrivateMessage);
-
-    return () => {
-      socket.off("private_message", handlePrivateMessage);
-    };
-  }, [socket, activeChat, currentUser, setMessages, setChats]);
-
-  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 

@@ -41,7 +41,7 @@ router.get("/:username/chats", async(req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ chats: user.chats });
+    res.json({ chats: user.chats, unreadCounts: Object.fromEntries(user.unreadCounts || []) });
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch chats" });
   }
@@ -108,6 +108,14 @@ router.put("/:username/update-chats", async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Failed to update chats" });
   }
+});
+
+router.put("/:username/reset-unread", async (req, res) => {
+  const { username } = req.params;
+  const { activeChat } = req.body;
+  
+  await User.findOneAndUpdate({ username }, { $set: { [`unreadCounts.${activeChat}`]: 0 } });
+  res.json({ success: true});
 });
 
 export default router;
