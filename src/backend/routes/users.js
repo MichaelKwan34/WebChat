@@ -26,7 +26,7 @@ router.get("/:username/friends", async(req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json({ friends: user.friends.sort() });
+    res.json({ friends: user.friends.sort(), nicknames: Object.fromEntries(user.nicknames || [])});
   } catch (err) {
     res.status(500).json({ message: "Failed to fetch friends" });
   }
@@ -110,12 +110,58 @@ router.put("/:username/update-chats", async (req, res) => {
   }
 });
 
+// Reset the number of unread messages
 router.put("/:username/reset-unread", async (req, res) => {
   const { username } = req.params;
   const { activeChat } = req.body;
   
   await User.findOneAndUpdate({ username }, { $set: { [`unreadCounts.${activeChat}`]: 0 } });
   res.json({ success: true});
+});
+
+
+// Remove a user from the friend list
+router.put("/:username/remove-friend", async (req, res) => {
+  const { username } = req.params;
+  const { activeChat } = req.body;
+
+  if (!activeChat) {
+    return res.status(400).json({ message: "activeChat is required in body" });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const filteredFriends = user.friends.filter(c => c !== activeChat);
+    
+    user.friends = filteredFriends;
+
+    await user.save();
+
+    res.json({ message: `'${activeChat}' has been removed` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to remove a friend" });
+  }
+});
+
+// Rename a contact
+router.put("/:username/rename", async (req, res) => {
+  const { username } = req.params;
+  const { activeChat, nickname } = req.body;
+
+  if (nickname == '') {
+    await User.findOneAndUpdate({ username }, { $set: { [`nicknames.${activeChat}`]: "" } });
+    res.json({ message: `Nickname has been reset to default`});
+
+  } else {
+    await User.findOneAndUpdate({ username }, { $set: { [`nicknames.${activeChat}`]: `${nickname}` } });
+    res.json({ message: `Successfully rename '${activeChat}' as '${nickname}'!`});
+  }
 });
 
 export default router;

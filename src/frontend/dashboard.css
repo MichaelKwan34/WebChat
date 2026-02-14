@@ -404,6 +404,10 @@ nav ul li a #person-icon {
   margin-left: 8px;
 }
 
+.add-or-message button:hover, .logoutBtn:hover {
+  background-color: #3a5789;
+}
+
 /* ---------- PORTRAIT MODE ---------- */
 
 /* small laptops / iPads */

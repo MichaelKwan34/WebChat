@@ -1,10 +1,16 @@
 import { useState, useRef, useEffect } from "react";
+import { showToast } from "../../utils/toast.js"
+import ContactModal from "./ContactModal";
 
-export default function ActiveChat({ socket, currentUser, activeChat, conversationId, messages, setMessages, setChats }) {
+export default function ActiveChat({ socket, currentUser, activeChat, conversationId, messages, setMessages, setChats, setFriends, nicknames, setNicknames }) {
   const [loadingSend, setLoadingSend] = useState(false);
 
   const [text, setText] = useState("");
   const messagesEndRef = useRef(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const handleSend = async () => {
     if (loadingSend) return;
@@ -84,11 +90,26 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
     else return `${msgDate.toLocaleDateString([], { year: 'numeric', month: 'long', day: 'numeric' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
   }
 
+  function capitalizeFirstLetter(str) {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1).toLowerCase();
+  }
+
   return (
     <div className="active-view">
-      <div className="right-side-header">
-        <label>{activeChat}</label>
+      <div className="right-side-header" onClick={openModal}>
+        {capitalizeFirstLetter(nicknames[activeChat] || activeChat)}
       </div>
+
+      <ContactModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        activeChat={activeChat} 
+        setFriends={setFriends} 
+        currentUser={currentUser} 
+        nicknames={nicknames} 
+        setNicknames={setNicknames}
+        ></ContactModal>
 
       <div className="messages">
       {messages.map((msg, index) => {
@@ -107,7 +128,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
       </div>
 
       <div className="message-input">
-        <input type="text" autoComplete="off" placeholder="Type a message..." value={text} 
+        <input type="text" autoComplete="off" placeholder="" value={text} 
                onChange={(e) => setText(e.target.value)}
                onKeyDown={(e) => e.key === "Enter" && handleSend()}/>
 

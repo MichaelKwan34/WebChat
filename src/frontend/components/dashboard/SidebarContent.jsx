@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { showToast } from "../../utils/toast.js"
 
-export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages, unreadCounts, setUnreadCounts }) {
+export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages, unreadCounts, setUnreadCounts, nicknames, setNicknames }) {
   const navigate = useNavigate();
   const [loadingChat, setLoadingChat] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -20,11 +20,6 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     localStorage.removeItem("token");
     sessionStorage.removeItem("token");
     navigate("/", { replace: true })
-  };
-
-  const filterList = (list) => {
-    if (!currentSearch.trim()) return list
-    return list.filter(item => item.toLowerCase().includes(currentSearch.toLowerCase()));
   };
 
   const handleFriendClick = async (friend) => {
@@ -50,20 +45,16 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
         body: JSON.stringify({ activeChat: friend })
       });
 
-      setUnreadCounts(prev => ({
-        ...prev,
-        [friend]: 0
-      }));
-
+      setUnreadCounts(prev => ({ ...prev, [friend]: 0 }));
     } catch (err) {
       showToast("Failed to load conversation", "error");
     } finally {
       setLoadingChat(false);
     }
-  };
+  }
 
   const handleChatClick = async (chat) => {
-    handleFriendClick(chat)
+    handleFriendClick(chat);
   }
 
   function isValidCharacters(str) {
@@ -165,6 +156,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       if (!res.ok) throw new Error("Failed to fetch friends");
       const data = await res.json();
       setFriends(data.friends);
+      setNicknames(data.nicknames || {});
     } catch (err) {
       showToast("Failed to fetch friends", "error");
     }
@@ -189,18 +181,34 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     }
   }, [currentUser]);
 
+  function capitalizeFirstLetter(str) {
+    if (!str) return "";
+    return str[0].toUpperCase() + str.slice(1).toLowerCase();
+  }
+
   if (activeTab === "friends") {
-    const filteredFriends = filterList(friends);
+     const mappedFriends = friends.map(friend => ({
+      original: friend,
+      display: nicknames[friend] || friend
+    }));
+
+    const filteredFriends = mappedFriends.filter(item =>
+      item.display.toLowerCase().includes(currentSearch.toLowerCase())
+    );
+
+    const sortedFriends = filteredFriends.sort((a, b) =>
+      a.display.toLowerCase().localeCompare(b.display.toLowerCase())
+    );
 
     return (
       <ul id="friend-lists">
-        {filteredFriends.map((friend) => (
+        {sortedFriends.map(({original, display}) => (
           <li
-            key={friend}
-            className={friend === activeFriend ? "active" : ""}
-            onClick={() => handleFriendClick(friend)}
+            key={original}
+            className={original === activeFriend ? "active" : ""}
+            onClick={() => handleFriendClick(original)}
           >
-            {friend}
+            {capitalizeFirstLetter(display)}
           </li>
         ))}
       </ul>
@@ -208,20 +216,27 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
   }
 
   if (activeTab === "chats") {
-    const filteredChats = filterList(chats);
+    const mappedChats = chats.map(chat => ({
+      original: chat,
+      display: nicknames[chat] || chat
+    }));
+
+    const filteredChats = mappedChats.filter(item =>
+      item.display.toLowerCase().includes(currentSearch.toLowerCase())
+    );
 
     return (
       <ul id="chat-lists">
-        {filteredChats.map((chat) => (
+        {filteredChats.map(({ original, display }) => (
           <li
-            key={chat}
-            className={chat === activeChat ? "active" : ""}
-            onClick={() => handleChatClick(chat)}
+            key={original}
+            className={original === activeChat ? "active" : ""}
+            onClick={() => handleChatClick(original)}
           >
-            {chat}
-            {unreadCounts[chat] > 0 && (
+            {capitalizeFirstLetter(display)}
+            {unreadCounts[original] > 0 && (
               <span className="unread"> 
-                  ({unreadCounts[chat] })
+                  ({unreadCounts[original] })
               </span>
             )}
           </li>

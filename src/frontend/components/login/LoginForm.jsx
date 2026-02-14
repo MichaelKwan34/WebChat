@@ -39,7 +39,7 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
           sessionStorage.setItem("token", data.token)
         }
         navigate("/dashboard", { replace:true });
-        showToast("Login Successfull", "success");
+        showToast(`Great to see you again, ${username[0].toUpperCase() + username.slice(1).toLowerCase()}!`, "success");
       } else {
         showToast("Username/Email or password is incorrect", "error");
         setPasswordLogin("");

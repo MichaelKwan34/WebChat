@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [friends, setFriends] = useState([]);
   const [chats, setChats] = useState([]);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const [nicknames, setNicknames] = useState({});
 
   const [activeFriend, setActiveFriend] = useState(null);
   const [activeChat, setActiveChat] = useState(null);
@@ -106,6 +107,8 @@ export default function DashboardPage() {
         setMessages={setMessages}
         unreadCounts={unreadCounts}
         setUnreadCounts={setUnreadCounts}
+        nicknames={nicknames}
+        setNicknames={setNicknames}
         />
 
       <ChatArea 
@@ -116,6 +119,10 @@ export default function DashboardPage() {
         messages={messages}
         setMessages={setMessages}
         setChats={setChats}
+        friends={friends}
+        setFriends={setFriends}
+        nicknames={nicknames}
+        setNicknames={setNicknames}
         />
     </section>
   );

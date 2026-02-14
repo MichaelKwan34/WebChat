@@ -1,0 +1,92 @@
+.contact-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  font-size: 20px;
+  user-select: none;
+}
+
+.contact-content {
+  display: flex;
+  flex-direction: column;
+  background: #1b2a41;
+  padding: 30px;
+  border-radius: 10px;
+  width: 600px;
+  max-width: 100%;
+  border:2px solid white;
+}
+
+.contact-content h2 { 
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.contact-inputs {
+  all: unset;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.arrow-right {
+  font-size: 1.75em;
+}
+
+.contact-inputs input {
+  width: 240px;
+  text-align: center;
+  background: rgba(255,255,255,0.2);
+}
+
+.contact-inputs input:nth-of-type(1), .contact-inputs input:nth-of-type(2){
+  color: white;
+  font-size: 18px;
+}
+
+.arrow-right{
+  height: 40.5px;
+}
+
+.contact-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.contact-buttons.single-button button {
+  flex: 1;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.contact-buttons.two-buttons button {
+  flex: 1;
+  background: rgb(132, 45, 45);  
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.contact-buttons.two-buttons button:hover {
+  background: rgb(177, 58, 58);
+}
+
+.contact-buttons button:hover {
+  background-color: #3a5789;
+}
