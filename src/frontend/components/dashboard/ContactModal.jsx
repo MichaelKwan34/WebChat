@@ -3,7 +3,7 @@ import "../../contactModal.css";
 import { arrowForwardOutline } from 'ionicons/icons';
 import { showToast } from "../../utils/toast.js"
 
-const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setFriends, currentUser, nicknames, setNicknames, setMessages, conversationId, setChats}) => {
+const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFriend, setFriends, currentUser, nicknames, setNicknames, setMessages, conversationId, setChats}) => {
   if (!isOpen) return null;
 
   const [rename, setRename] = useState("");
@@ -67,6 +67,7 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setFriends, 
         return filtered;
       });
       setActiveChat(null);
+      setActiveFriend(null);
     } catch (err) {
       showToast(err, "error");
     } finally {

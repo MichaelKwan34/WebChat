@@ -35,7 +35,6 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       const resMsg = await fetch(`/api/messages/${dataConversationId.conversationId}`)
       const dataMsg = await resMsg.json();
 
-      // ADDED
       const filterDeletedMsg = dataMsg.filter(msg => !msg.deleteBy.includes(currentUser));
       setMessages(filterDeletedMsg);
       setActiveFriend(friend);

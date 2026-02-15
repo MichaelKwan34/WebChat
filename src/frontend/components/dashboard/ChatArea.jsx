@@ -1,7 +1,7 @@
 import InactiveView from "./InactiveView";
 import ActiveChat from "./ActiveChat";
 
-export default function ChatArea({ socket, currentUser, activeChat, setActiveChat, conversationId, messages, setMessages, setChats, friends, setFriends, nicknames, setNicknames, replyingTo, setReplyingTo }) {
+export default function ChatArea({ socket, currentUser, activeChat, setActiveChat, setActiveFriend, conversationId, messages, setMessages, setChats, friends, setFriends, nicknames, setNicknames, replyingTo, setReplyingTo }) {
   return (
     <div className="right-side">
       {!activeChat && <InactiveView socket={socket} currentUser={currentUser} activeChat={activeChat} setMessages={setMessages} setChats={setChats}/>}
@@ -10,6 +10,7 @@ export default function ChatArea({ socket, currentUser, activeChat, setActiveCha
                         currentUser={currentUser} 
                         activeChat={activeChat} 
                         setActiveChat={setActiveChat}
+                        setActiveFriend={setActiveFriend}
                         conversationId={conversationId} 
                         messages={messages}
                         setMessages={setMessages} 

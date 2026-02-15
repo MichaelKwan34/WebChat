@@ -3,7 +3,7 @@ import { showToast } from "../../utils/toast.js"
 import { closeCircleOutline } from "ionicons/icons";
 import ContactModal from "./ContactModal";
 
-export default function ActiveChat({ socket, currentUser, activeChat, setActiveChat, conversationId, messages, setMessages, setChats, setFriends, nicknames, setNicknames, replyingTo, setReplyingTo }) {
+export default function ActiveChat({ socket, currentUser, activeChat, setActiveChat, setActiveFriend, conversationId, messages, setMessages, setChats, setFriends, nicknames, setNicknames, replyingTo, setReplyingTo }) {
   const [loadingSend, setLoadingSend] = useState(false);
 
   const [text, setText] = useState("");
@@ -107,6 +107,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
         onClose={closeModal} 
         activeChat={activeChat} 
         setActiveChat={setActiveChat}
+        setActiveFriend={setActiveFriend}
         setFriends={setFriends} 
         currentUser={currentUser} 
         nicknames={nicknames} 

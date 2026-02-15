@@ -71,6 +71,12 @@ export default function DashboardPage() {
     const handlePrivateMessage = ({ from, to, text, time }) => {
       if (from === activeChat && to === currentUser) {
         setMessages(prev => [...prev, { sender: from, text, createdAt: time }]);
+        
+        fetch(`/api/users/${currentUser}/reset-unread`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ activeChat: activeChat })
+        });
       } else if (to === currentUser) {
         setUnreadCounts(prev => ({ ...prev,[from]: (prev[from] || 0) + 1}));
       }
@@ -119,6 +125,7 @@ export default function DashboardPage() {
         currentUser={currentUser}
         activeChat={activeChat} 
         setActiveChat={setActiveChat}
+        setActiveFriend={setActiveFriend}
         conversationId={conversationId}
         messages={messages}
         setMessages={setMessages}
