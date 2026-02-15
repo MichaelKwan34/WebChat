@@ -28,11 +28,11 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     setLoadingChat(true);
 
     try {
-      const resConversationId = await fetch(`http://192.168.1.96:3000/api/conversations/${currentUser}/${friend}`);
+      const resConversationId = await fetch(`/api/conversations/${currentUser}/${friend}`);
       const dataConversationId = await resConversationId.json();
       setConversationId(dataConversationId.conversationId);
 
-      const resMsg = await fetch(`http://192.168.1.96:3000/api/messages/${dataConversationId.conversationId}`)
+      const resMsg = await fetch(`/api/messages/${dataConversationId.conversationId}`)
       const dataMsg = await resMsg.json();
 
       // ADDED
@@ -41,7 +41,7 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       setActiveFriend(friend);
       setActiveChat(friend);
 
-      await fetch(`http://192.168.1.96:3000/api/users/${currentUser}/reset-unread`, {
+      await fetch(`/api/users/${currentUser}/reset-unread`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ activeChat: friend })
