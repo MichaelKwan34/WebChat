@@ -164,4 +164,33 @@ router.put("/:username/rename", async (req, res) => {
   }
 });
 
+// Remove from chat list
+router.put("/:username/remove-chat", async (req, res) => {
+  const { username } = req.params;
+  const { activeChat } = req.body;
+
+  if (!activeChat) {
+    return res.status(400).json({ message: "activeChat is required in body" });
+  }
+
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const filteredChats = user.chats.filter(c => c !== activeChat);
+    
+    user.chats = filteredChats;
+
+    await user.save();
+
+    res.json({ message: `Chat history with '${activeChat}' has been deleted` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to remove a chat" });
+  }
+});
+
 export default router;

@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { showToast } from "../../utils/toast.js"
+import { closeCircleOutline } from "ionicons/icons";
 import ContactModal from "./ContactModal";
 
-export default function ActiveChat({ socket, currentUser, activeChat, conversationId, messages, setMessages, setChats, setFriends, nicknames, setNicknames }) {
+export default function ActiveChat({ socket, currentUser, activeChat, setActiveChat, conversationId, messages, setMessages, setChats, setFriends, nicknames, setNicknames, replyingTo, setReplyingTo }) {
   const [loadingSend, setLoadingSend] = useState(false);
 
   const [text, setText] = useState("");
@@ -105,27 +106,47 @@ export default function ActiveChat({ socket, currentUser, activeChat, conversati
         isOpen={isModalOpen} 
         onClose={closeModal} 
         activeChat={activeChat} 
+        setActiveChat={setActiveChat}
         setFriends={setFriends} 
         currentUser={currentUser} 
         nicknames={nicknames} 
         setNicknames={setNicknames}
+        setMessages={setMessages}
+        conversationId={conversationId}
+        setChats={setChats}
         ></ContactModal>
 
       <div className="messages">
-      {messages.map((msg, index) => {
-            const messageClass = msg.sender === currentUser ? "sent" : "received";
-
-            return (
-              <div key={index} className={`message ${messageClass}`}>
-                <p className="message-content">{msg.text}</p>
-                <span className="message-time">
-                  {formatMessageTime(msg.createdAt)}
-                </span>
-              </div>
-            );
+        {messages.map((msg, index) => {
+          const messageClass = msg.sender === currentUser ? "sent" : "received";
+          return (
+            <div key={index} className={`message-row ${messageClass}`} onDoubleClick={() => setReplyingTo({messageClass, msg, activeChat})} >
+               <div className={`message ${messageClass}`}>
+                  <p className="message-content">{msg.text}</p>
+                  <span className="message-time">
+                    {formatMessageTime(msg.createdAt)}
+                  </span>
+                </div>
+            </div>
+          );
           })}
           <div ref={messagesEndRef} />
       </div>
+
+      {replyingTo && (
+        <div className="reply-preview" style={
+          {
+            borderColor: replyingTo.messageClass === "sent" ? "rgb(94, 192, 164)" : "#ffcb78"
+          }
+        }>
+          <h3>{capitalizeFirstLetter(replyingTo.messageClass === "sent" ? "you" : nicknames[replyingTo.activeChat] || replyingTo.activeChat)}</h3>
+          
+          <div className="reply-row">
+            <p>{replyingTo.msg.text.length > 115 ? replyingTo.msg.text.slice(0, 115) + "..." : replyingTo.msg.text}</p>
+            <ion-icon className="close-circle-icon" icon={closeCircleOutline} onClick={() => setReplyingTo(null)} />
+          </div>
+        </div>
+      )}
 
       <div className="message-input">
         <input type="text" autoComplete="off" placeholder="" value={text} 

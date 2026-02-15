@@ -7,7 +7,8 @@ const MessageSchema = new mongoose.Schema({
         required: true
     },
     sender: {type: String, required: true},
-    text: {type: String, required: true}
+    text: {type: String, required: true},
+    deleteBy: {type: [String], default: []}
 }, {timestamps: true}); 
 
 export default mongoose.model("Message", MessageSchema);

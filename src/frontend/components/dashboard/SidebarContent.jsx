@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { showToast } from "../../utils/toast.js"
 
-export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages, unreadCounts, setUnreadCounts, nicknames, setNicknames }) {
+export default function SidebarContent({ socket, currentUser, activeTab, activeFriend, setActiveFriend, activeChat, setActiveChat, friends, setFriends, chats, setChats, currentSearch, setConversationId, setMessages, unreadCounts, setUnreadCounts, nicknames, setNicknames, replyingTo, setReplyingTo }) {
   const navigate = useNavigate();
   const [loadingChat, setLoadingChat] = useState(false);
   const [loadingSearch, setLoadingSearch] = useState(false);
@@ -28,24 +28,28 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     setLoadingChat(true);
 
     try {
-      const resConversationId = await fetch(`/api/conversations/${currentUser}/${friend}`);
+      const resConversationId = await fetch(`http://192.168.1.96:3000/api/conversations/${currentUser}/${friend}`);
       const dataConversationId = await resConversationId.json();
       setConversationId(dataConversationId.conversationId);
 
-      const resMsg = await fetch(`/api/messages/${dataConversationId.conversationId}`)
+      const resMsg = await fetch(`http://192.168.1.96:3000/api/messages/${dataConversationId.conversationId}`)
       const dataMsg = await resMsg.json();
 
-      setMessages(dataMsg)
+      // ADDED
+      const filterDeletedMsg = dataMsg.filter(msg => !msg.deleteBy.includes(currentUser));
+      setMessages(filterDeletedMsg);
       setActiveFriend(friend);
       setActiveChat(friend);
 
-      await fetch(`/api/users/${currentUser}/reset-unread`, {
+      await fetch(`http://192.168.1.96:3000/api/users/${currentUser}/reset-unread`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ activeChat: friend })
       });
 
       setUnreadCounts(prev => ({ ...prev, [friend]: 0 }));
+
+      replyingTo && replyingTo.activeChat !== friend && setReplyingTo(null)
     } catch (err) {
       showToast("Failed to load conversation", "error");
     } finally {

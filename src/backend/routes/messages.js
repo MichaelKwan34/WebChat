@@ -52,4 +52,34 @@ router.post("/:conversationId", async (req, res) => {
   }
 });
 
+// Perform physical or logical deletion of messages
+router.post("/:conversationId/delete-chat", async (req, res) => {
+  const { conversationId } = req.params;
+  const { currentUser, activeChat } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+    return res.status(400).json({ message: "Invalid conversationId" });
+  }
+
+  try {
+    const messages = await Message.find({ conversationId }).sort({ createdAt: 1 });
+    const unmarkedMessages = messages.filter(msg => !msg.deleteBy.includes(currentUser));
+
+    for (const msg of unmarkedMessages) {
+      if (!msg.deleteBy.includes(currentUser)) {
+        msg.deleteBy.push(currentUser);
+      }
+      
+      if (msg.deleteBy.includes(currentUser) && msg.deleteBy.includes(activeChat)) {
+        await msg.deleteOne();
+      } else {
+        await msg.save();
+      }
+    }
+    res.status(201).json({ message: "Message deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Message deletion failed" });
+  }
+});
+
 export default router;

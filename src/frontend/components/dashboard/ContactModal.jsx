@@ -3,7 +3,7 @@ import "../../contactModal.css";
 import { arrowForwardOutline } from 'ionicons/icons';
 import { showToast } from "../../utils/toast.js"
 
-const ContactModal = ({ isOpen, onClose, activeChat, setFriends, currentUser, setNicknames}) => {
+const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setFriends, currentUser, nicknames, setNicknames, setMessages, conversationId, setChats}) => {
   if (!isOpen) return null;
 
   const [rename, setRename] = useState("");
@@ -33,8 +33,45 @@ const ContactModal = ({ isOpen, onClose, activeChat, setFriends, currentUser, se
   }
 
   const handleDelete = async () => {
-    console.log("DELETE")
-    onClose();
+    try {
+      const resDelete = await fetch(`/api/messages/${conversationId}/delete-chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ currentUser, activeChat })
+      });
+
+      if (!resDelete.ok) {
+        throw new Error("Failed to delete messages");
+      }
+
+      const resRemove = await fetch(`/api/users/${currentUser}/remove-chat`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ activeChat }),
+      });
+
+      if (!resRemove.ok) {
+        throw new Error("Failed to remove chat on server");
+      }
+
+      const dataDelete = await resDelete.json();
+      showToast(dataDelete.message, "success");
+
+      setMessages([]);
+      setChats(prevChats => {
+        const filtered = prevChats.filter(chat => chat !== activeChat);
+        return filtered;
+      });
+      setActiveChat(null);
+    } catch (err) {
+      showToast(err, "error");
+    } finally {
+      onClose();
+    }
   }
 
   const handleRemove = async () => {
@@ -64,11 +101,15 @@ const ContactModal = ({ isOpen, onClose, activeChat, setFriends, currentUser, se
   return (
     <div className="contact-overlay" onClick={onClose}>
       <div className="contact-content" onClick={(e) => e.stopPropagation()}>
-        <h2>Contact</h2>
+        
+        <h2>{activeChat}</h2>
         <div className="contact-inputs">
-          <input type="text"  value={activeChat} readOnly/> 
+          <input type="text"  value={ nicknames[activeChat] || activeChat } readOnly/>
           <ion-icon className="arrow-right" icon={arrowForwardOutline} />
-          <input type="text" placeholder="" value={rename} onChange={(e) => {setRename(e.target.value)}}/>
+          <input type="text" value={rename} 
+                 onChange={(e) => {setRename(e.target.value)}}
+                 onKeyDown={(e) => {if (e.key === "Enter") handleRename();}}
+                 />
         </div>
 
         <div className="contact-buttons single-button">

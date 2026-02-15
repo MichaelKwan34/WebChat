@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [activeChat, setActiveChat] = useState(null);
   const [conversationId, setConversationId] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [replyingTo, setReplyingTo] = useState(null);
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
@@ -109,12 +110,15 @@ export default function DashboardPage() {
         setUnreadCounts={setUnreadCounts}
         nicknames={nicknames}
         setNicknames={setNicknames}
+        replyingTo={replyingTo}
+        setReplyingTo={setReplyingTo}
         />
 
       <ChatArea 
         socket={socketRef.current}
         currentUser={currentUser}
         activeChat={activeChat} 
+        setActiveChat={setActiveChat}
         conversationId={conversationId}
         messages={messages}
         setMessages={setMessages}
@@ -123,6 +127,8 @@ export default function DashboardPage() {
         setFriends={setFriends}
         nicknames={nicknames}
         setNicknames={setNicknames}
+        replyingTo={replyingTo}
+        setReplyingTo={setReplyingTo}
         />
     </section>
   );
