@@ -28,11 +28,27 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     setLoadingChat(true);
 
     try {
-      const resConversationId = await fetch(`/api/conversations/${currentUser}/${friend}`);
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken)
+
+      const resConversationId = await fetch(`/api/conversations/${friend}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
       const dataConversationId = await resConversationId.json();
       setConversationId(dataConversationId.conversationId);
 
-      const resMsg = await fetch(`/api/messages/${dataConversationId.conversationId}`)
+      const resMsg = await fetch(`/api/messages/${dataConversationId.conversationId}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
       const dataMsg = await resMsg.json();
 
       const filterDeletedMsg = dataMsg.filter(msg => !msg.deleteBy.includes(currentUser));
@@ -40,9 +56,12 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       setActiveFriend(friend);
       setActiveChat(friend);
 
-      await fetch(`/api/users/${currentUser}/reset-unread`, {
+      await fetch(`/api/users/reset-unread`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({ activeChat: friend })
       });
 
@@ -126,9 +145,16 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
     setLoadingAddContact(true);
 
     try {
-       const res = await fetch(`/api/users/add-contact/${currentUser}`, {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
+      const res = await fetch(`/api/users/add-contact`, {
         method: "POST",
-        headers: { "Content-Type": "application/json"},
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({searchedUsername: searchedUsername})
       });
 
@@ -155,7 +181,17 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
   async function fetchFriends() {
     try {
-      const res = await fetch(`/api/users/${currentUser}/friends`);
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
+      const res = await fetch(`/api/users/friends`, {
+        method: "GET",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
       if (!res.ok) throw new Error("Failed to fetch friends");
       const data = await res.json();
       setFriends(data.friends);
@@ -167,7 +203,17 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
 
   async function fetchChats() {
     try {
-      const res = await fetch(`/api/users/${currentUser}/chats`);
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
+      const res = await fetch(`/api/users/chats`, {
+        method: "GET",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
       if (!res.ok) throw new Error("Failed to fetch chats");
       const data = await res.json();
       setChats(data.chats);

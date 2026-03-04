@@ -1,12 +1,14 @@
 import express from "express";
+import protect from "../middleware/authMiddleware.js"
 import mongoose from "mongoose";
 import Message from "../models/Message.js";
+import Conversation from "../models/Conversation.js"
 import User from "../models/User.js";
 
 const router = express.Router();
 
 // Fetch the user's conversation with another user
-router.get("/:conversationId", async (req, res) => {
+router.get("/:conversationId", protect, async (req, res) => {
   const { conversationId } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(conversationId)) {
@@ -14,6 +16,11 @@ router.get("/:conversationId", async (req, res) => {
   }
 
   try {
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation || !conversation.participants.includes(req.user.username)) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
     const messages = await Message.find({ conversationId }).sort({ createdAt: 1 });
     res.json(messages);
   } catch (err) {
@@ -22,12 +29,18 @@ router.get("/:conversationId", async (req, res) => {
 });
 
 // Push a message to the DB
-router.post("/:conversationId", async (req, res) => {
+router.post("/:conversationId", protect, async (req, res) => {
+  const sender = req.user.username;
   const { conversationId } = req.params;
-  const { sender, msg, receiver } = req.body;
+  const { msg, receiver } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(conversationId)) {
     return res.status(400).json({ message: "Invalid conversationId" });
+  }
+
+  const conversation = await Conversation.findById(conversationId);
+  if (!conversation || !conversation.participants.includes(sender)) {
+    return res.status(403).json({ message: "Forbidden" });
   }
 
   try {
@@ -53,9 +66,10 @@ router.post("/:conversationId", async (req, res) => {
 });
 
 // Perform physical or logical deletion of messages
-router.post("/:conversationId/delete-chat", async (req, res) => {
+router.post("/:conversationId/delete-chat", protect, async (req, res) => {
   const { conversationId } = req.params;
-  const { currentUser, activeChat } = req.body;
+  const { activeChat } = req.body;
+  const currentUser = req.user.username;
 
   if (!mongoose.Types.ObjectId.isValid(conversationId)) {
     return res.status(400).json({ message: "Invalid conversationId" });

@@ -1,4 +1,5 @@
 import express from "express";
+import protect from "../middleware/authMiddleware.js"
 import User from "../models/User.js";
 
 const router = express.Router();
@@ -18,9 +19,9 @@ router.get("/check-email", async (req, res) => {
 });
 
 // Fetch user's friends list
-router.get("/:username/friends", async(req, res) => {
+router.get("/friends", protect, async(req, res) => {
   try {
-    const user = await User.findOne({username: req.params.username});
+    const user = await User.findOne({username: req.user.username});
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -33,9 +34,9 @@ router.get("/:username/friends", async(req, res) => {
 });
 
 // Fetch user's list of chats
-router.get("/:username/chats", async(req, res) => {
+router.get("/chats", protect, async(req, res) => {
   try {
-    const user = await User.findOne({username: req.params.username});
+    const user = await User.findOne({username: req.user.username});
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -48,8 +49,8 @@ router.get("/:username/chats", async(req, res) => {
 });
 
 // Add a contact
-router.post("/add-contact/:currentUser", async (req, res) => {
-  const { currentUser} = req.params; 
+router.post("/add-contact", protect, async (req, res) => {
+  const currentUser = req.user.username; 
   const { searchedUsername } = req.body;
   try {
     const user = await User.findOne({ username: currentUser });
@@ -74,8 +75,8 @@ router.get("/find-user/:currentUser/:username", async (req, res) => {
 });
 
 // Update the order of chats for a user
-router.put("/:username/update-chats", async (req, res) => {
-  const { username } = req.params;
+router.put("/update-chats", protect, async (req, res) => {
+  const username = req.user.username;
   const { activeChat } = req.body;
 
   if (!activeChat) {
@@ -111,8 +112,8 @@ router.put("/:username/update-chats", async (req, res) => {
 });
 
 // Reset the number of unread messages
-router.put("/:username/reset-unread", async (req, res) => {
-  const { username } = req.params;
+router.put("/reset-unread", protect, async (req, res) => {
+  const username  = req.user.username;
   const { activeChat } = req.body;
   
   await User.findOneAndUpdate({ username }, { $set: { [`unreadCounts.${activeChat}`]: 0 } });
@@ -121,8 +122,8 @@ router.put("/:username/reset-unread", async (req, res) => {
 
 
 // Remove a user from the friend list
-router.put("/:username/remove-friend", async (req, res) => {
-  const { username } = req.params;
+router.put("/remove-friend", protect, async (req, res) => {
+  const username = req.user.username;
   const { activeChat } = req.body;
 
   if (!activeChat) {
@@ -150,8 +151,8 @@ router.put("/:username/remove-friend", async (req, res) => {
 });
 
 // Rename a contact
-router.put("/:username/rename", async (req, res) => {
-  const { username } = req.params;
+router.put("/rename", protect, async (req, res) => {
+  const username = req.user.username;
   const { activeChat, nickname } = req.body;
 
   if (nickname == '') {
@@ -165,8 +166,8 @@ router.put("/:username/rename", async (req, res) => {
 });
 
 // Remove from chat list
-router.put("/:username/remove-chat", async (req, res) => {
-  const { username } = req.params;
+router.put("/remove-chat", protect, async (req, res) => {
+  const username = req.user.username;
   const { activeChat } = req.body;
 
   if (!activeChat) {

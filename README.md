@@ -22,7 +22,7 @@ This project demonstrates full-stack development, authentication systems, real-t
 - 💬 Real-Time Messaging with Socket.io
 - 🗂 Persistent Chat History (MongoDB)
 - 👥 Multiple Users Connected Simultaneously
-- 🔒 JWT-based authentication for real-time messaging (Socket.io)
+- 🔒 JWT-based authentication for backend routes and real-time messaging
 - 🌍 Deployed on Render
 
 ---
@@ -62,7 +62,7 @@ This project demonstrates full-stack development, authentication systems, real-t
 2. Server validates credentials.
 3. Server generates a JWT token.
 4. Token is stored on the client.
-5. Token is used for authenticating WebSocket (Socket.io) connections.
+5. Protected routes verify the token before granting access.
 
 ### Real-Time Messaging Flow
 
@@ -90,7 +90,6 @@ cd webchat
 MONGO_URI=mongo_uri_string
 OTP_SECRET=otp_secret_key
 JWT_SECRET=JWT_secret_key
-CLIENT_URL=http://localhost:3000
 RESEND_API=api_secret_key
 ```
 
@@ -121,7 +120,6 @@ npm run dev -- --host
 ### 📈 Future Improvements
 
 - Add message reply functionality
-- Protect HTTP API routes with JWT authentication middleware
 - Improve password UX (confirmation & visibility toggle)
 - Implement user blocking feature
 - Support image/photo uploads

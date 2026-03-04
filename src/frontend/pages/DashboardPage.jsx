@@ -70,11 +70,17 @@ export default function DashboardPage() {
 
     const handlePrivateMessage = ({ from, to, text, time }) => {
       if (from === activeChat && to === currentUser) {
+        const localToken = localStorage.getItem("token");
+        const sessionToken = sessionStorage.getItem("token");
+        const token = (localToken ? localToken : sessionToken)
+
         setMessages(prev => [...prev, { sender: from, text, createdAt: time }]);
-        
-        fetch(`/api/users/${currentUser}/reset-unread`, {
+        fetch(`/api/users/reset-unread`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json" 
+          },
           body: JSON.stringify({ activeChat: activeChat })
         });
       } else if (to === currentUser) {

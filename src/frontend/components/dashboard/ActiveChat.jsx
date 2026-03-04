@@ -20,9 +20,14 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
     const trimmedText = text.trim();
 
     try {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
       const res = await fetch(`/api/messages/${conversationId}`, {
         method: "POST",
         headers: { 
+          "Authorization": `Bearer ${token}`,
           "Content-Type" : "application/json",
         },
         body: JSON.stringify({
@@ -53,9 +58,12 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
         return [activeChat, ...filtered]
       });
 
-      await fetch(`/api/users/${currentUser}/update-chats`, {
+      await fetch(`/api/users/update-chats`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({ activeChat: activeChat })
       });
 

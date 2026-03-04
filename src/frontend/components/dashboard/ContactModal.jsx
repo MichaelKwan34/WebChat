@@ -10,9 +10,14 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
 
   const handleRename = async () => {
     try {
-      const res = await fetch(`/api/users/${currentUser}/rename`, {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
+      const res = await fetch(`/api/users/rename`, {
         method: "PUT",
         headers: {
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ activeChat, nickname: rename }),
@@ -34,21 +39,27 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
 
   const handleDelete = async () => {
     try {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
       const resDelete = await fetch(`/api/messages/${conversationId}/delete-chat`, {
         method: "POST",
         headers: {
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ currentUser, activeChat })
+        body: JSON.stringify({ activeChat })
       });
 
       if (!resDelete.ok) {
         throw new Error("Failed to delete messages");
       }
 
-      const resRemove = await fetch(`/api/users/${currentUser}/remove-chat`, {
+      const resRemove = await fetch(`/api/users/remove-chat`, {
         method: "PUT",
         headers: {
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ activeChat }),
@@ -78,9 +89,14 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
   const handleRemove = async () => {
     setFriends(prev => prev.filter(friend => friend !== activeChat));
     try {
-      const res = await fetch(`/api/users/${currentUser}/remove-friend`, {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+      
+      const res = await fetch(`/api/users/remove-friend`, {
         method: "PUT",
         headers: {
+          "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ activeChat }),
