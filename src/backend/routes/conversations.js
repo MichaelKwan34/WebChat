@@ -5,7 +5,7 @@ import Conversation from "../models/Conversation.js";
 const router = express.Router();
 
 // Fetch the conversationId between users
-router.get("/:user1/:user2", protect, async (req, res) => {
+router.get("/:user2", protect, async (req, res) => {
   const user1 = req.user.username;
   const { user2 } = req.params;
 
