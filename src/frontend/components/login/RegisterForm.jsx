@@ -6,6 +6,11 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
   const [emailRegister, setEmailRegister] = useState("");
   const [passwordRegister, setPasswordRegister] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  function handlePasswordIcon() {
+    setShowPassword(prev => !prev);
+  }
 
   async function isUsernameAvailable(username) {
     const res = await fetch(`/api/users/check-username?username=${username}`);
@@ -108,7 +113,7 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
   return (
     <form onSubmit={handleSubmit}>
       <div className="registration-header">
-        <ion-icon name="arrow-back" id="registerBackIcon" onClick={() => {setView("login"); setUsernameRegister(""); setEmailRegister(""); setPasswordRegister("") }}></ion-icon>
+        <ion-icon name="arrow-back" id="registerBackIcon" onClick={() => {setView("login"); setUsernameRegister(""); setEmailRegister(""); setPasswordRegister(""); setShowPassword(false) }}></ion-icon>
         <h1>Create Account</h1>
       </div>
 
@@ -125,8 +130,8 @@ export default function RegisterForm({ setView, setUsernameLogin, setPasswordLog
       </div>
 
       <div className="inputbox">
-        <ion-icon name="lock-closed-outline"></ion-icon>
-        <input type="password" autoComplete="off" required value={passwordRegister} onChange={(e) => setPasswordRegister(e.target.value)}/>
+        <ion-icon name={showPassword ? "eye-outline" : "lock-closed-outline"} onClick={handlePasswordIcon} style={{cursor: "pointer"}}></ion-icon>
+        <input type={showPassword ? "text" : "password"} autoComplete="off" required value={passwordRegister} onChange={(e) => setPasswordRegister(e.target.value)}/>
         <label>Password</label>
       </div>
 

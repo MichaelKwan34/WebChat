@@ -7,6 +7,11 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
 
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  function handlePasswordIcon() {
+    setShowPassword(prev => !prev);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,8 +67,8 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
         </div>
 
         <div className="inputbox">
-          <ion-icon name="lock-closed-outline"></ion-icon>
-          <input type="password" autoComplete="off" required value={passwordLogin} onChange={(e) => setPasswordLogin(e.target.value)}/>
+          <ion-icon name={showPassword ? "eye-outline" : "lock-closed-outline"} onClick={handlePasswordIcon} style={{cursor: "pointer"}}></ion-icon>
+          <input type={showPassword ? "text" : "password"} autoComplete="off" required value={passwordLogin} onChange={(e) => setPasswordLogin(e.target.value)}/>
           <label>Password</label>
         </div>
 
@@ -72,14 +77,14 @@ export default function LoginForm({ setView, usernameLogin, setUsernameLogin, pa
             <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}/> Remember me
           </label>
           <label> 
-            <a href="#" onClick={(e) => { e.preventDefault(); setView("forgot"); }}> Forgot password?</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); setView("forgot"); setShowPassword(false) }}> Forgot password?</a>
           </label>
         </div>
 
         <button type="submit" disabled={loading}>Login</button>
 
         <div className="register">
-          <p>Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); setView("register"); }}>Register </a> </p>
+          <p>Don't have an account? <a href="#" onClick={(e) => { e.preventDefault(); setView("register"); setShowPassword(false) }}>Register </a> </p>
         </div>
       </form>
   );

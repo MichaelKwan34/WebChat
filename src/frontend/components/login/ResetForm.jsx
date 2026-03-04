@@ -4,6 +4,11 @@ import { showToast } from "../../utils/toast.js";
 export default function ResetForm({ setView, emailReset, setEmailReset }) {
   const [loading, setLoading] = useState(false);
   const [newPassword, setNewPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false);
+
+  function handlePasswordIcon() {
+    setShowPassword(prev => !prev);
+  }
 
   function validatePassword(password) {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -52,13 +57,13 @@ export default function ResetForm({ setView, emailReset, setEmailReset }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="reset-header">
-        <ion-icon name="arrow-back" id="newPassBackIcon" onClick={() => {setView("otp"); setNewPassword("")}}></ion-icon>
+        <ion-icon name="arrow-back" id="newPassBackIcon" onClick={() => {setView("otp"); setNewPassword(""); setShowPassword(false)}}></ion-icon>
         <h1>New Password</h1>
       </div>
 
       <div className="inputbox">
-        <ion-icon name="lock-closed-outline"></ion-icon>
-        <input type="password" autoComplete="off" required value={newPassword} onChange={(e) => {setNewPassword(e.target.value)}}/>
+        <ion-icon name={showPassword ? "eye" : "lock-closed-outline"} onClick={handlePasswordIcon} style={{cursor: "pointer"}}></ion-icon>
+        <input type={showPassword ? "text" :"password"} autoComplete="off" required value={newPassword} onChange={(e) => {setNewPassword(e.target.value)}}/>
         <label>Password</label>
       </div>
 

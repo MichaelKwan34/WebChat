@@ -120,7 +120,6 @@ npm run dev -- --host
 ### 📈 Future Improvements
 
 - Add message reply functionality
-- Improve password UX (confirmation & visibility toggle)
 - Implement user blocking feature
 - Support image/photo uploads
 - Add email verification during registration
