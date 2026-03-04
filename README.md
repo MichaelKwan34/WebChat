@@ -1,9 +1,9 @@
-# 💬 WebChat (React Version)
+# 💬 WebChat
 
 A full-stack real-time web chat application built with React, Node.js, Express, Socket.io, MongoDB, and JWT authentication.
 
 🌐 **Live Demo:**  
-http://webchat-michaelkwan.onrender.com
+https://webchat-michaelkwan.onrender.com
 
 ---
 
@@ -11,19 +11,19 @@ http://webchat-michaelkwan.onrender.com
 
 WebChat is a real-time messaging application that allows users to register, log in securely, and communicate instantly through WebSockets. Messages are persisted in MongoDB, and authentication is handled using JSON Web Tokens (JWT).
 
-This project demonstrates full-stack development, authentication systems, real-time communication, and production deployment.
+This project demonstrates full-stack development, secure authentication, real-time communication, and production deployment with a persistent database.
 
 ---
 
 ## 🚀 Features
 
-- 🔐 User Registration & Login
-- 🛡 JWT Authentication
-- 💬 Real-Time Messaging with Socket.io
+- 🛡 Stateless JWT Authentication
+- 🔒 Protected Backend API Endpoints
+- 💬 Real-Time Messaging via WebSockets (Socket.io)
 - 🗂 Persistent Chat History (MongoDB)
-- 👥 Multiple Users Connected Simultaneously
-- 🔒 JWT-based authentication for backend routes and real-time messaging
-- 🌍 Deployed on Render
+- 👥 Multi-User Concurrent Support
+- 🔐 Secure User Registration & Login
+- 🌍 Production Deployment on Render
 
 ---
 
@@ -31,7 +31,7 @@ This project demonstrates full-stack development, authentication systems, real-t
 
 ### Frontend
 
-- React
+- React (with Vite)
 - Socket.io-client
 
 ### Backend
@@ -61,7 +61,7 @@ This project demonstrates full-stack development, authentication systems, real-t
 1. User registers or logs in.
 2. Server validates credentials.
 3. Server generates a JWT token.
-4. Token is stored on the client.
+4. Token is stored on the client (currently localStorage/sessionStorage; can be upgraded to HTTP-only cookies).
 5. Protected routes verify the token before granting access.
 
 ### Real-Time Messaging Flow
@@ -93,7 +93,13 @@ JWT_SECRET=JWT_secret_key
 RESEND_API=api_secret_key
 ```
 
-### 3️⃣ Start the project
+### 3️⃣ Start the Backend
+
+```bash
+node src/backend/server.js
+```
+
+### 4️⃣ Start the Frontend
 
 ```bash
 npm install
@@ -114,15 +120,26 @@ npm run dev -- --host
 - JWT is used for stateless authentication.
 - Protected API routes require token verification.
 - Environment variables are used to protect sensitive credentials.
+- Future improvements include storing JWT in HTTP-only cookies to mitigate XSS attacks.
 
 ---
 
 ### 📈 Future Improvements
 
-- Add message reply functionality
-- Implement user blocking feature
-- Support image/photo uploads
-- Add email verification during registration
+- Add threaded message replies (in progress)
+- Show real-time typing indicators
+- Upgrade authentication to HTTP-only cookies for enhanced security
+- Consider using Redux for global state management in future iterations
+
+---
+
+### 💡 Nice-to-Have Enhancements
+
+- End-to-end message encryption
+- Message editing/deletion
+- User profile management (username/password/bio)
+- User blocking functionality
+- Image/photo uploads
 
 ---
 

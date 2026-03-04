@@ -96,7 +96,12 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
     if (msgDate >= startOfToday) return `Today, ${msgDate.toLocaleTimeString([], timeFormat)}`;
     else if (msgDate >= startOfYesterday) return `Yesterday, ${msgDate.toLocaleTimeString([], timeFormat)}`;
     else if (msgDate >= startOfWeekAgo) return `${msgDate.toLocaleDateString([], { weekday: 'long' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
-    else return `${msgDate.toLocaleDateString([], { year: 'numeric', month: 'short', day: 'numeric' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else {
+      const day = msgDate.getDate();
+      const month = msgDate.toLocaleString('default', { month: 'short' });
+      const year = msgDate.getFullYear();
+      return `${month} ${day} (${year}), ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    }
   }
 
   function capitalizeFirstLetter(str) {
