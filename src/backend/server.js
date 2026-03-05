@@ -41,6 +41,7 @@ io.on("connection", (socket) => {
       const payload = jwt.verify(token, process.env.JWT_SECRET);
       socket.username = payload.username;
       onlineUsers.set(socket.username, socket.id);
+      socket.broadcast.emit("online_status_result", { user: socket.username, isOnline: true });
     } catch (err) {
       socket.disconnect();
     }
@@ -49,6 +50,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     if (socket.username) {
       onlineUsers.delete(socket.username);
+      socket.broadcast.emit("online_status_result", { user: socket.username, isOnline: false });
     }
   });
 
@@ -58,6 +60,11 @@ io.on("connection", (socket) => {
       socket.to(receiverSocketId).emit("private_message", { from, to, text, time })
     }
   });
+
+  socket.on("check_online_status", ({ to }) => {
+    const isOnline = onlineUsers.has(to);
+    socket.emit("online_status_result", { user: to, isOnline });
+  })
 });
 
 httpServer.listen(PORT, () => { console.log(`Server running on port ${PORT}...`); });

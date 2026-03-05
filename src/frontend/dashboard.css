@@ -445,6 +445,12 @@ nav ul li a #person-icon {
   right: 7px;
 }
 
+.onlineStatus {
+  font-size:20px;
+  margin-right: 12px;
+  transform: translateY(15%);
+}
+
 /* ---------- PORTRAIT MODE ---------- */
 
 /* small laptops / iPads */

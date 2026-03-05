@@ -66,8 +66,8 @@ export default function SidebarContent({ socket, currentUser, activeTab, activeF
       });
 
       setUnreadCounts(prev => ({ ...prev, [friend]: 0 }));
-
       replyingTo && replyingTo.activeChat !== friend && setReplyingTo(null)
+      socket.emit("check_online_status", { to: friend });
     } catch (err) {
       showToast("Failed to load conversation", "error");
     } finally {

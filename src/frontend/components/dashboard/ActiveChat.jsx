@@ -13,6 +13,8 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+  const [friendStatus, setFriendStatus] = useState({});
+
   const handleSend = async () => {
     if (loadingSend) return;
     setLoadingSend(true);
@@ -104,6 +106,14 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
     }
   }
 
+  useEffect(() => {
+    const handleOnlineStatus = ({ user, isOnline }) => {
+      setFriendStatus(prev => ({ ...prev, [user]: isOnline }));
+    };
+    socket.on("online_status_result", handleOnlineStatus);
+    return () => socket.off("online_status_result", handleOnlineStatus);
+  }, [socket]);
+
   function capitalizeFirstLetter(str) {
     if (!str) return "";
     return str[0].toUpperCase() + str.slice(1).toLowerCase();
@@ -112,6 +122,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
   return (
     <div className="active-view">
       <div className="right-side-header" onClick={openModal}>
+        <ion-icon name="radio-button-on" className="onlineStatus" style={friendStatus[activeChat] ? {color: "#499167"} : {color: "#c76767"}}/>
         {capitalizeFirstLetter(nicknames[activeChat] || activeChat)}
       </div>
 
