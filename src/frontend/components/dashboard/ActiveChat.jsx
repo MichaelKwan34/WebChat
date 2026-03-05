@@ -112,8 +112,17 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
     const handleOnlineStatus = ({ user, isOnline }) => {
       setFriendStatus(prev => ({ ...prev, [user]: isOnline }));
     };
+
+    const handleTyping = ({ user, isTyping }) => {
+      setTypingStatus(prev => ({ ...prev, [user]: isTyping }));
+    };
+
     socket.on("online_status_result", handleOnlineStatus);
-    return () => socket.off("online_status_result", handleOnlineStatus);
+    socket.on("is_typing_result", handleTyping);
+    return () => {
+      socket.off("online_status_result", handleOnlineStatus);
+      socket.off("is_typing_result", handleTyping);
+    }
   }, [socket]);
 
   function capitalizeFirstLetter(str) {
