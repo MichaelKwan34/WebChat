@@ -167,6 +167,8 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
       }
     } catch (err) {
       showToast("Add contact failed", "error");
+    } finally {
+      onClose();
     }
   }; 
 
