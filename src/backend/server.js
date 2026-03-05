@@ -65,6 +65,13 @@ io.on("connection", (socket) => {
     const isOnline = onlineUsers.has(to);
     socket.emit("online_status_result", { user: to, isOnline });
   })
+
+  socket.on("typing", ({ to, isTyping }) => {
+    const receiverSocketId = onlineUsers.get(to);
+    if (receiverSocketId) {
+      socket.to(receiverSocketId).emit("is_typing_result", { user: socket.username, isTyping})
+    }
+  }); 
 });
 
 httpServer.listen(PORT, () => { console.log(`Server running on port ${PORT}...`); });

@@ -14,6 +14,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
   const closeModal = () => setIsModalOpen(false);
 
   const [friendStatus, setFriendStatus] = useState({});
+  const [typingStatus, setTypingStatus] = useState({});
 
   const handleSend = async () => {
     if (loadingSend) return;
@@ -69,7 +70,8 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
         body: JSON.stringify({ activeChat: activeChat })
       });
 
-      socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent})
+      socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent});
+      socket.emit("typing", { to: activeChat, isTyping: false });
     } catch (err) {
       showToast("Failed to send a message", "error");
     } finally {
@@ -123,7 +125,10 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
     <div className="active-view">
       <div className="right-side-header" onClick={openModal}>
         <ion-icon name="radio-button-on" className="onlineStatus" style={friendStatus[activeChat] ? {color: "#499167"} : {color: "#c76767"}}/>
-        {capitalizeFirstLetter(nicknames[activeChat] || activeChat)}
+         <span>
+          {capitalizeFirstLetter(nicknames[activeChat] || activeChat)}
+          {friendStatus[activeChat] && typingStatus[activeChat] && (<span className="typing-text"> is typing...</span>)}
+        </span>
       </div>
 
       <ContactModal 
@@ -176,7 +181,11 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
 
       <div className="message-input">
         <input type="text" autoComplete="off" placeholder="" value={text} 
-               onChange={(e) => setText(e.target.value)}
+               onChange={(e) => {
+                setText(e.target.value);
+                if (e.target.value !== "") socket.emit("typing", { to: activeChat, isTyping: true });
+                else socket.emit("typing", { to: activeChat, isTyping: false });
+               }}
                onKeyDown={(e) => e.key === "Enter" && handleSend()}/>
 
         <button className="send-btn" aria-label="Send message" onClick={handleSend}>

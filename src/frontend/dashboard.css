@@ -451,6 +451,11 @@ nav ul li a #person-icon {
   transform: translateY(15%);
 }
 
+.typing-text {
+  font-size: 17px;
+  font-weight: normal;
+}
+
 /* ---------- PORTRAIT MODE ---------- */
 
 /* small laptops / iPads */
