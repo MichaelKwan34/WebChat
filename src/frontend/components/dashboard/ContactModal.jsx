@@ -3,10 +3,11 @@ import "../../contactModal.css";
 import { arrowForwardOutline } from 'ionicons/icons';
 import { showToast } from "../../utils/toast.js"
 
-const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFriend, setFriends, currentUser, nicknames, setNicknames, setMessages, conversationId, setChats}) => {
+const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFriend, friends, setFriends, nicknames, setNicknames, setMessages, conversationId, setChats}) => {
   if (!isOpen) return null;
 
   const [rename, setRename] = useState("");
+  const [isFriend, setIsFriend] = useState(false);
 
   const handleRename = async () => {
     try {
@@ -115,6 +116,65 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
     }
   }
 
+  async function fetchFriends() {
+    try {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
+      const res = await fetch(`/api/users/friends`, {
+        method: "GET",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      });
+      if (!res.ok) throw new Error("Failed to fetch friends");
+      const data = await res.json();
+      setFriends(data.friends);
+      setNicknames(data.nicknames || {});
+    } catch (err) {
+      showToast("Failed to fetch friends", "error");
+    }
+  }
+
+  const handleAdd = async () => {
+    try {
+      const localToken = localStorage.getItem("token");
+      const sessionToken = sessionStorage.getItem("token");
+      const token = (localToken ? localToken : sessionToken);
+
+      const res = await fetch(`/api/users/add-contact`, {
+        method: "POST",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({searchedUsername: searchedUsername})
+      });
+
+      if (!res.ok) {
+        throw new Error("Request to add contact failed");
+      }
+
+      const data = await res.json();
+
+      if (data.success) {
+        showToast(data.message, "success");
+        fetchFriends();
+      } else {
+        showToast(data.message, "error");
+      }
+    } catch (err) {
+      showToast("Add contact failed", "error");
+    }
+  }; 
+
+  useEffect(() => {
+    if (friends.includes(activeChat)) setIsFriend(true);
+    else setIsFriend(false);
+  }, [])
+
   return (
     <div className="contact-overlay" onClick={onClose}>
       <div className="contact-content" onClick={(e) => e.stopPropagation()}>
@@ -134,7 +194,8 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
         </div>
 
         <div className="contact-buttons two-buttons">
-          <button onClick={handleRemove}>Remove Friend</button>
+          <button onClick={handleRemove} style={isFriend ? {display:""} : {display:"none"}}>Remove Friend</button>
+          <button className="addButton" onClick={handleAdd} style={isFriend ? {display:"none"} : {display:""}}>Add Contact</button>
           <button onClick={handleDelete}>Delete Chat</button>
         </div>
       </div>

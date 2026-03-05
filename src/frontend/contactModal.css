@@ -83,8 +83,16 @@
   font-weight: 500;
 }
 
+.contact-buttons.two-buttons .addButton {
+  background: rgba(255,255,255,0.2);
+}
+
 .contact-buttons.two-buttons button:hover {
   background: rgb(177, 58, 58);
+}
+
+.contact-buttons.two-buttons .addButton:hover {
+  background-color: #3a5789;
 }
 
 .contact-buttons button:hover {
