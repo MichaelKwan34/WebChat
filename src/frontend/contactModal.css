@@ -98,3 +98,25 @@
 .contact-buttons button:hover {
   background-color: #3a5789;
 }
+
+/* normal phones */
+@media (max-width: 414px) and (orientation: portrait) {
+  .contact-content {
+    max-width: 95%;
+  }
+
+  .contact-inputs input {
+    width: 142px;
+  }
+}
+
+/* small phones */
+@media (max-width: 375px) and (orientation: portrait) {
+  .contact-content {
+    max-width: 95%;
+  }
+
+  .contact-inputs input {
+    width: 125px;
+  }
+}

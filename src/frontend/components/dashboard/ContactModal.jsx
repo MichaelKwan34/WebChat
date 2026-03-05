@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../../contactModal.css"; 
 import { arrowForwardOutline } from 'ionicons/icons';
 import { showToast } from "../../utils/toast.js"
@@ -150,7 +150,7 @@ const ContactModal = ({ isOpen, onClose, activeChat, setActiveChat, setActiveFri
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({searchedUsername: searchedUsername})
+        body: JSON.stringify({searchedUsername: activeChat})
       });
 
       if (!res.ok) {
