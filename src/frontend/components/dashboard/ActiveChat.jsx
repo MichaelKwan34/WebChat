@@ -81,6 +81,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    setText("");
   }, [messages]);
 
   function formatMessageTime(dateStr) {
