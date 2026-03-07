@@ -126,7 +126,6 @@ npm run dev -- --host
 
 ### 📈 Possible Future Enhancements
 
-- Add threaded message replies (in progress)
 - Upgrade authentication to HTTP-only cookies for enhanced security
 - Consider using Redux for global state management in future iterations
 

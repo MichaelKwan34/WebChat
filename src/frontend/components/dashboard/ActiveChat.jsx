@@ -128,7 +128,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
 
     const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false};
 
-    if (msgDate >= startOfToday) return `Today, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    if (msgDate >= startOfToday) return `${msgDate.toLocaleTimeString([], timeFormat)}`;
     else if (msgDate >= startOfYesterday) return `Yesterday, ${msgDate.toLocaleTimeString([], timeFormat)}`;
     else if (msgDate >= startOfWeekAgo) return `${msgDate.toLocaleDateString([], { weekday: 'short' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
     else {
@@ -179,7 +179,7 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
                <div className={`message ${messageClass}`}>
 
                   {hasReplyTo && (
-                    <div className="reply-container" style={{ borderColor: msg.replyTo.sender === activeChat ? "#ffcb78" : "rgb(247, 154, 238)"  }}>
+                    <div className="reply-container" style={{ borderColor: msg.replyTo.sender === activeChat ? "#ffcb78" : "rgb(94, 192, 164)"  }}>
                       <h3>{capitalizeFirstLetter(msg.replyTo.sender === activeChat ? msg.replyTo.sender : "You")}</h3>
                       
                       <div className="reply-row">
