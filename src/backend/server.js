@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
   socket.on("private_message", ({ from, to, text, time }) => {
     const receiverSocketId = onlineUsers.get(to);
     if (receiverSocketId) {
-      socket.to(receiverSocketId).emit("private_message", { from, to, text, time })
+      socket.to(receiverSocketId).emit("private_message", { from, to, text, time, replyTo })
     }
   });
 

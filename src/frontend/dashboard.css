@@ -256,12 +256,14 @@ nav ul li a #person-icon {
   background-color: rgba(120, 170, 255, 0.25);
   color: white;
   border-bottom-right-radius: 0;
+  text-align: right;
 }
 
 .message.received {
   justify-content: flex-start;
   background-color: rgba(255, 255, 255, 0.2);
   border-bottom-left-radius: 0;
+  text-align: left;
 }
 
 .message-row {
@@ -282,7 +284,6 @@ nav ul li a #person-icon {
   opacity: 0.6;
   margin-top: 2px;
   display: block;
-  text-align: right;
 }
 
 .messages {
@@ -419,7 +420,7 @@ nav ul li a #person-icon {
   background-color: #3a5789;
 }
 
-.reply-preview {
+.reply-preview, .reply-container {
   padding: 8px;
   font-size: 14px;
   border-left: 4px solid;
@@ -427,6 +428,11 @@ nav ul li a #person-icon {
   position: relative;
   padding-left: 12px;
   background: #2a3b57;
+  text-align: left;
+}
+
+.reply-container {
+  margin-bottom: 5px;
 }
 
 .reply-preview .reply-row {

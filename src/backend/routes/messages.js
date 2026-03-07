@@ -32,7 +32,7 @@ router.get("/:conversationId", protect, async (req, res) => {
 router.post("/:conversationId", protect, async (req, res) => {
   const sender = req.user.username;
   const { conversationId } = req.params;
-  const { msg, receiver } = req.body;
+  const { msg, receiver, replyTo} = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(conversationId)) {
     return res.status(400).json({ message: "Invalid conversationId" });
@@ -46,7 +46,7 @@ router.post("/:conversationId", protect, async (req, res) => {
   try {
     const userA = await User.findOne({ username: sender });
     const userB = await User.findOne({ username: receiver });
-    const message = new Message({ conversationId, sender, text: msg })
+    const message = new Message({ conversationId, sender, text: msg, replyTo })
 
     if (!userA.chats.includes(receiver)) {
       userA.chats.push(receiver);

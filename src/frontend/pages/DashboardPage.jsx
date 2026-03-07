@@ -74,7 +74,18 @@ export default function DashboardPage() {
         const sessionToken = sessionStorage.getItem("token");
         const token = (localToken ? localToken : sessionToken)
 
-        setMessages(prev => [...prev, { sender: from, text, createdAt: time }]);
+        setMessages(prev => [...prev, 
+          { sender: from, 
+            text, 
+            createdAt: time, 
+            replyTo: replyTo ?
+            {
+              sender: replyTo.msg.sender,
+              text: replyTo.msg.text
+            } : null
+          }
+        ]);
+
         fetch(`/api/users/reset-unread`, {
           method: "PUT",
           headers: { 
@@ -83,7 +94,8 @@ export default function DashboardPage() {
           },
           body: JSON.stringify({ activeChat: activeChat })
         });
-      } else if (to === currentUser) {
+      } 
+      else if (to === currentUser) {
         setUnreadCounts(prev => ({ ...prev,[from]: (prev[from] || 0) + 1}));
       }
       setChats(prevChats => {

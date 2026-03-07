@@ -34,9 +34,13 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
           "Content-Type" : "application/json",
         },
         body: JSON.stringify({
-          sender: currentUser,
           msg: trimmedText,
-          receiver: activeChat
+          receiver: activeChat,
+          replyTo: replyingTo ? 
+            {
+              sender: replyingTo.msg.sender,
+              text: replyingTo.msg.text
+            } : null
         })
       });
 
@@ -52,7 +56,12 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
         {
           sender: currentUser,
           text: trimmedText,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
+          replyTo: replyingTo ?
+            {
+              sender: replyingTo.msg.sender,
+              text: replyingTo.msg.text
+            } : null
         }
       ]);
 
@@ -70,7 +79,8 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
         body: JSON.stringify({ activeChat: activeChat })
       });
 
-      socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent});
+      setReplyingTo(null);
+      socket.emit("private_message", {from: currentUser, to: activeChat, text: trimmedText, time: data.timeSent, replyTo: replyingTo});
       socket.emit("typing", { to: activeChat, isTyping: false });
     } catch (err) {
       showToast("Failed to send a message", "error");
@@ -81,33 +91,11 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    setText("");
   }, [messages]);
 
-  function formatMessageTime(dateStr) {
-    const msgDate = new Date(dateStr);
-    const now = new Date();
-
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    const startOfYesterday = new Date(startOfToday);
-    startOfYesterday.setDate(startOfToday.getDate() - 1);
-
-    const startOfWeekAgo = new Date(startOfToday);
-    startOfWeekAgo.setDate(startOfToday.getDate() - 7);
-
-    const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false};
-
-    if (msgDate >= startOfToday) return `Today, ${msgDate.toLocaleTimeString([], timeFormat)}`;
-    else if (msgDate >= startOfYesterday) return `Yesterday, ${msgDate.toLocaleTimeString([], timeFormat)}`;
-    else if (msgDate >= startOfWeekAgo) return `${msgDate.toLocaleDateString([], { weekday: 'long' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
-    else {
-      const day = msgDate.getDate();
-      const month = msgDate.toLocaleString('default', { month: 'short' });
-      const year = msgDate.getFullYear();
-      return `${month} ${day} (${year}), ${msgDate.toLocaleTimeString([], timeFormat)}`;
-    }
-  }
+  useEffect(() => {
+    setText("");
+  }, [activeChat]);
 
   useEffect(() => {
     const handleOnlineStatus = ({ user, isOnline }) => {
@@ -125,6 +113,31 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
       socket.off("is_typing_result", handleTyping);
     }
   }, [socket]);
+
+  function formatMessageTime(dateStr) {
+    const msgDate = new Date(dateStr);
+    const now = new Date();
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const startOfYesterday = new Date(startOfToday);
+    startOfYesterday.setDate(startOfToday.getDate() - 1);
+
+    const startOfWeekAgo = new Date(startOfToday);
+    startOfWeekAgo.setDate(startOfToday.getDate() - 7);
+
+    const timeFormat = { hour: '2-digit', minute: '2-digit', hour12: false};
+
+    if (msgDate >= startOfToday) return `Today, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else if (msgDate >= startOfYesterday) return `Yesterday, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else if (msgDate >= startOfWeekAgo) return `${msgDate.toLocaleDateString([], { weekday: 'short' })}, ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    else {
+      const day = msgDate.getDate();
+      const month = msgDate.toLocaleString('default', { month: 'short' });
+      const year = msgDate.getFullYear();
+      return `${month} ${day} (${year}), ${msgDate.toLocaleTimeString([], timeFormat)}`;
+    }
+  }
 
   function capitalizeFirstLetter(str) {
     if (!str) return "";
@@ -160,9 +173,21 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
       <div className="messages">
         {messages.map((msg, index) => {
           const messageClass = msg.sender === currentUser ? "sent" : "received";
+          const hasReplyTo = !!msg.replyTo;
           return (
             <div key={index} className={`message-row ${messageClass}`} onDoubleClick={() => setReplyingTo({messageClass, msg, activeChat})} >
                <div className={`message ${messageClass}`}>
+
+                  {hasReplyTo && (
+                    <div className="reply-container" style={{ borderColor: msg.replyTo.sender === activeChat ? "#ffcb78" : "rgb(247, 154, 238)"  }}>
+                      <h3>{capitalizeFirstLetter(msg.replyTo.sender === activeChat ? msg.replyTo.sender : "You")}</h3>
+                      
+                      <div className="reply-row">
+                        <p>{msg.replyTo.text}</p>
+                      </div>
+                    </div>
+                  )}
+
                   <p className="message-content">{msg.text}</p>
                   <span className="message-time">
                     {formatMessageTime(msg.createdAt)}
@@ -175,13 +200,8 @@ export default function ActiveChat({ socket, currentUser, activeChat, setActiveC
       </div>
 
       {replyingTo && (
-        <div className="reply-preview" style={
-          {
-            borderColor: replyingTo.messageClass === "sent" ? "rgb(94, 192, 164)" : "#ffcb78"
-          }
-        }>
+        <div className="reply-preview" style={{ borderColor: replyingTo.messageClass === "sent" ? "rgb(94, 192, 164)" : "#ffcb78" }}>
           <h3>{capitalizeFirstLetter(replyingTo.messageClass === "sent" ? "you" : nicknames[replyingTo.activeChat] || replyingTo.activeChat)}</h3>
-          
           <div className="reply-row">
             <p>{replyingTo.msg.text.length > 115 ? replyingTo.msg.text.slice(0, 115) + "..." : replyingTo.msg.text}</p>
             <ion-icon className="close-circle-icon" icon={closeCircleOutline} onClick={() => setReplyingTo(null)} />

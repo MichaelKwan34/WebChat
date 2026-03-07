@@ -124,7 +124,7 @@ npm run dev -- --host
 
 ---
 
-### 📈 Future Improvements
+### 📈 Possible Future Enhancements
 
 - Add threaded message replies (in progress)
 - Upgrade authentication to HTTP-only cookies for enhanced security
@@ -139,6 +139,11 @@ npm run dev -- --host
 - User profile management (username/password/bio)
 - User blocking functionality
 - Image/photo uploads
+
+### ⚠️ Known Limitations
+
+- Password reset email delivery requires a verified domain with Resend.
+  The current demo uses a testing domain, so email delivery may not work in all environments.
 
 ---
 

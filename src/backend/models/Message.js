@@ -8,7 +8,14 @@ const MessageSchema = new mongoose.Schema({
     },
     sender: {type: String, required: true},
     text: {type: String, required: true},
-    deleteBy: {type: [String], default: []}
+    deleteBy: {type: [String], default: []},
+    replyTo: {
+        type: {
+            sender: { type: String },
+            text: { type: String }
+        },
+        default: null
+    }
 }, {timestamps: true}); 
 
 export default mongoose.model("Message", MessageSchema);
