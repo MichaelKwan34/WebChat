@@ -68,7 +68,7 @@ export default function DashboardPage() {
 
     const socket = socketRef.current;
 
-    const handlePrivateMessage = ({ from, to, text, time }) => {
+    const handlePrivateMessage = ({ from, to, text, time, replyTo }) => {
       if (from === activeChat && to === currentUser) {
         const localToken = localStorage.getItem("token");
         const sessionToken = sessionStorage.getItem("token");
