@@ -124,6 +124,13 @@ npm run dev -- --host
 
 ---
 
+### ⚠️ Known Limitations
+
+- Password reset email delivery requires a verified domain with Resend.
+  Since this demo uses a testing domain, email delivery may not function correctly in production environments.
+
+---
+
 ### 📈 Possible Future Enhancements
 
 - Upgrade authentication to HTTP-only cookies for enhanced security
@@ -138,11 +145,6 @@ npm run dev -- --host
 - User profile management (username/password/bio)
 - User blocking functionality
 - Image/photo uploads
-
-### ⚠️ Known Limitations
-
-- Password reset email delivery requires a verified domain with Resend.
-  The current demo uses a testing domain, so email delivery may not work in all environments.
 
 ---
 
